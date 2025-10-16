@@ -1,0 +1,5 @@
+@reference "../../app/globals.css"; 
+
+.chess-piece {
+  @apply w-3/4 cursor-pointer
+}
