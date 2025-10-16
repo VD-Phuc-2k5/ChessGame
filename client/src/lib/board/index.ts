@@ -2,7 +2,7 @@ import CCell from "@/lib/cell";
 import { PieceColor, PieceType } from "../piece";
 
 class CBoard {
-  private static PIECE_ROWS = { WHITE: [0, 1], BLACK: [6, 7] };
+  private static PIECE_ROWS = { WHITE: [6, 7], BLACK: [0, 1] };
   private static PAWN_ROWS = { WHITE: 1, BLACK: 6 };
   private static getPieceType = (col: number): PieceType => {
     const typeMap: Record<number, PieceType> = {
