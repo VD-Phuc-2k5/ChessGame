@@ -1,11 +1,16 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import CCell from "@/lib/cell";
 import CBoard from "@/lib/board";
+import { ValidMoves } from "@/lib/piece";
 import Cell from "@/components/Cell";
 import styles from "./board.module.css";
 
 function Board() {
   const [board, setBoard] = useState<CCell[]>(CBoard.initialBoard());
+  const validMoves: Map<string, number[]> = useMemo(() => {
+    ValidMoves.initialize();
+    return ValidMoves.table;
+  }, []);
 
   return (
     <section className={`${styles["chess-board"]}`}>

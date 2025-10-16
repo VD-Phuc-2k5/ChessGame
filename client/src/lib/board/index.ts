@@ -1,5 +1,6 @@
 import CCell from "@/lib/cell";
 import { PieceColor, PieceType } from "../piece";
+import { MoveVectors, Coordinates } from "@/lib/configs/vectors";
 
 class CBoard {
   private static PIECE_ROWS = { WHITE: [6, 7], BLACK: [0, 1] };
@@ -28,6 +29,20 @@ class CBoard {
 
   static getRowIndex(position: number): number {
     return Math.floor(position / 8);
+  }
+
+  static getPositionFromCoords(row: number, col: number): number {
+    return row * 8 + col;
+  }
+
+  static moveFrom(position: number, direction: string): number {
+    if (position === -1) return -1;
+    const { x, y }: Coordinates = MoveVectors[direction];
+    const newRow = CBoard.getRowIndex(position) + x;
+    const newCol = CBoard.getColumnIndex(position) + y;
+    const isValid = 0 <= newRow && newRow <= 7 && 0 <= newCol && newCol <= 7;
+    if (!isValid) return -1;
+    return CBoard.getPositionFromCoords(newRow, newCol);
   }
 
   static initialBoard(): CCell[] {
