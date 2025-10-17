@@ -62,10 +62,47 @@ class ValidMoves {
     }
   }
 
+  private static generateKnightMoves(position: number) {
+    const whiteKey = ValidMoves.hashKey(
+      PieceColor.White,
+      PieceType.Knight,
+      position,
+    );
+    const blackKey = ValidMoves.hashKey(
+      PieceColor.Black,
+      PieceType.Knight,
+      position,
+    );
+    const validMoves = ValidMoves.Moves();
+
+    const addKnightValidMove = (direction1: string, direction2: string) => {
+      validMoves.add(
+        (() => {
+          const current = CBoard.moveFrom(position, direction1, 2);
+          return CBoard.moveFrom(current, direction2);
+        })(),
+      );
+    };
+
+    addKnightValidMove("up", "left");
+    addKnightValidMove("up", "right");
+    addKnightValidMove("down", "left");
+    addKnightValidMove("down", "right");
+    addKnightValidMove("left", "up");
+    addKnightValidMove("left", "down");
+    addKnightValidMove("right", "up");
+    addKnightValidMove("right", "down");
+
+    ValidMoves.table.set(whiteKey, validMoves.get());
+    ValidMoves.table.set(blackKey, validMoves.get());
+  }
+
+  // up-right
   static initialize() {
     for (let p = 0; p < 64; p++) {
       ValidMoves.generatePawnMoves(PieceColor.White, PieceType.Pawn, p);
       ValidMoves.generatePawnMoves(PieceColor.Black, PieceType.Pawn, p);
+      ValidMoves.generateKnightMoves(p);
     }
   }
 }
