@@ -157,6 +157,40 @@ class ValidMoves {
     ValidMoves.table.set(blackKey, validMoves.get());
   }
 
+  private static generateQueenMoves(position: number) {
+    const whiteKey = ValidMoves.hashKey(
+      PieceColor.White,
+      PieceType.Queen,
+      position,
+    );
+    const blackKey = ValidMoves.hashKey(
+      PieceColor.Black,
+      PieceType.Queen,
+      position,
+    );
+    const validMoves = ValidMoves.Moves();
+
+    const addQueenValidMove = (direction: string) => {
+      let current: number = CBoard.moveFrom(position, direction);
+      while (current !== -1) {
+        validMoves.add(current);
+        current = CBoard.moveFrom(current, direction);
+      }
+    };
+
+    addQueenValidMove("up");
+    addQueenValidMove("upLeft");
+    addQueenValidMove("upRight");
+    addQueenValidMove("down");
+    addQueenValidMove("downLeft");
+    addQueenValidMove("downRight");
+    addQueenValidMove("left");
+    addQueenValidMove("right");
+
+    ValidMoves.table.set(whiteKey, validMoves.get());
+    ValidMoves.table.set(blackKey, validMoves.get());
+  }
+
   static initialize() {
     for (let p = 0; p < 64; p++) {
       ValidMoves.generatePawnMoves(PieceColor.White, PieceType.Pawn, p);
@@ -164,6 +198,7 @@ class ValidMoves {
       ValidMoves.generateKnightMoves(p);
       ValidMoves.generateBishopMoves(p);
       ValidMoves.generateRookMoves(p);
+      ValidMoves.generateQueenMoves(p);
     }
   }
 }
