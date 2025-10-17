@@ -30,15 +30,12 @@ class ValidMoves {
     const key = ValidMoves.hashKey(color, piece, position);
     const row = CBoard.getRowIndex(position);
     const validMoves = ValidMoves.Moves();
-    let current: number = position;
 
     if (color === PieceColor.White) {
       const step = row === 6 ? 2 : row === 7 ? 0 : 1;
       // move forward
-      for (let i = 0; i < step; i++) {
-        current = CBoard.moveFrom(current, "up");
-        if (current === -1) break;
-        validMoves.add(current);
+      for (let i = 0; i <= step; i++) {
+        validMoves.add(CBoard.moveFrom(position, "up", i));
       }
 
       // enPassant move
@@ -51,10 +48,8 @@ class ValidMoves {
     } else {
       const step = row === 1 ? 2 : row === 0 ? 0 : 1;
       // move forward
-      for (let i = 0; i < step; i++) {
-        current = CBoard.moveFrom(current, "down");
-        if (current === -1) break;
-        validMoves.add(current);
+      for (let i = 0; i <= step; i++) {
+        validMoves.add(CBoard.moveFrom(position, "down", i));
       }
 
       // enPassant move

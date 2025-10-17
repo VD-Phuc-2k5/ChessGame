@@ -35,11 +35,15 @@ class CBoard {
     return row * 8 + col;
   }
 
-  static moveFrom(position: number, direction: string): number {
-    if (position === -1) return -1;
+  static moveFrom(
+    position: number,
+    direction: string,
+    step: number = 1,
+  ): number {
+    if (position === -1 || !step) return -1;
     const { x, y }: Coordinates = MoveVectors[direction];
-    const newRow = CBoard.getRowIndex(position) + x;
-    const newCol = CBoard.getColumnIndex(position) + y;
+    const newRow = CBoard.getRowIndex(position) + step * x;
+    const newCol = CBoard.getColumnIndex(position) + step * y;
     const isValid = 0 <= newRow && newRow <= 7 && 0 <= newCol && newCol <= 7;
     if (!isValid) return -1;
     return CBoard.getPositionFromCoords(newRow, newCol);
