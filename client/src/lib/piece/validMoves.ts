@@ -4,7 +4,7 @@ import CBoard from "../board";
 class ValidMoves {
   static table: Map<string, number[]> = new Map();
 
-  private static hashKey(
+  static hashKey(
     color: PieceColor,
     piece: PieceType,
     position: number,
@@ -97,12 +97,43 @@ class ValidMoves {
     ValidMoves.table.set(blackKey, validMoves.get());
   }
 
+  private static generateBishopMoves(position: number) {
+    const whiteKey = ValidMoves.hashKey(
+      PieceColor.White,
+      PieceType.Bishop,
+      position,
+    );
+    const blackKey = ValidMoves.hashKey(
+      PieceColor.Black,
+      PieceType.Bishop,
+      position,
+    );
+    const validMoves = ValidMoves.Moves();
+
+    const addBishopValidMove = (direction: string) => {
+      let current: number = CBoard.moveFrom(position, direction);
+      while (current !== -1) {
+        validMoves.add(current);
+        current = CBoard.moveFrom(current, direction);
+      }
+    };
+
+    addBishopValidMove("upLeft");
+    addBishopValidMove("upRight");
+    addBishopValidMove("downLeft");
+    addBishopValidMove("downRight");
+
+    ValidMoves.table.set(whiteKey, validMoves.get());
+    ValidMoves.table.set(blackKey, validMoves.get());
+  }
+
   // up-right
   static initialize() {
     for (let p = 0; p < 64; p++) {
       ValidMoves.generatePawnMoves(PieceColor.White, PieceType.Pawn, p);
       ValidMoves.generatePawnMoves(PieceColor.Black, PieceType.Pawn, p);
       ValidMoves.generateKnightMoves(p);
+      ValidMoves.generateBishopMoves(p);
     }
   }
 }
