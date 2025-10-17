@@ -127,13 +127,43 @@ class ValidMoves {
     ValidMoves.table.set(blackKey, validMoves.get());
   }
 
-  // up-right
+  private static generateRookMoves(position: number) {
+    const whiteKey = ValidMoves.hashKey(
+      PieceColor.White,
+      PieceType.Rook,
+      position,
+    );
+    const blackKey = ValidMoves.hashKey(
+      PieceColor.Black,
+      PieceType.Rook,
+      position,
+    );
+    const validMoves = ValidMoves.Moves();
+
+    const addRookValidMove = (direction: string) => {
+      let current: number = CBoard.moveFrom(position, direction);
+      while (current !== -1) {
+        validMoves.add(current);
+        current = CBoard.moveFrom(current, direction);
+      }
+    };
+
+    addRookValidMove("up");
+    addRookValidMove("down");
+    addRookValidMove("left");
+    addRookValidMove("right");
+
+    ValidMoves.table.set(whiteKey, validMoves.get());
+    ValidMoves.table.set(blackKey, validMoves.get());
+  }
+
   static initialize() {
     for (let p = 0; p < 64; p++) {
       ValidMoves.generatePawnMoves(PieceColor.White, PieceType.Pawn, p);
       ValidMoves.generatePawnMoves(PieceColor.Black, PieceType.Pawn, p);
       ValidMoves.generateKnightMoves(p);
       ValidMoves.generateBishopMoves(p);
+      ValidMoves.generateRookMoves(p);
     }
   }
 }
