@@ -1,9 +1,12 @@
-"use client";
+'use client';
 
-import { useMemo } from "react";
-import Piece from "@/components/Piece";
-import CBoard from "@/lib/board";
-import styles from "./cell.module.css";
+import { useMemo } from 'react';
+
+import CBoard from '@/lib/board';
+
+import Piece from '@/components/Piece';
+
+import styles from './cell.module.css';
 
 interface CellProps {
   position: number;
@@ -14,11 +17,11 @@ function Cell({ position, pieceNotation }: CellProps) {
   const col = useMemo(() => CBoard.getColumnIndex(position), [position]);
   const row = useMemo(() => CBoard.getRowIndex(position), [position]);
   const bgColor = useMemo(
-    () => ((col + row) & 1 ? styles["square-black"] : styles["square-white"]),
-    [col, row],
+    () => ((col + row) & 1 ? styles['square-black'] : styles['square-white']),
+    [col, row]
   );
   return (
-    <div className={`${styles["chess-square"]} ${bgColor}`}>
+    <div className={`${styles['chess-square']} ${bgColor}`}>
       {pieceNotation && <Piece pieceNotation={pieceNotation} />}
     </div>
   );

@@ -1,7 +1,7 @@
 @reference "../../app/globals.css";
 
 .chess-square {
-  @apply w-1/8 aspect-square flex justify-center items-center shadow-sm;
+  @apply flex aspect-square w-1/8 items-center justify-center shadow-sm;
 }
 
 .square-black {

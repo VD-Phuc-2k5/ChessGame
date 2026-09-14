@@ -1,10 +1,12 @@
-import type { Metadata } from "next";
-import { roboto } from "@/fonts";
-import "./globals.css";
+import type { Metadata } from 'next';
+
+import { roboto } from '@/fonts';
+
+import './globals.css';
 
 export const metadata: Metadata = {
-  title: "ChessGame",
-  description: "Playing Chess Game",
+  title: 'ChessGame',
+  description: 'Playing Chess Game',
 };
 
 export default function RootLayout({

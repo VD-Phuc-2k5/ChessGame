@@ -1,9 +1,12 @@
-import { useState, useMemo } from "react";
-import CCell from "@/lib/cell";
-import CBoard from "@/lib/board";
-import { ValidMoves } from "@/lib/piece";
-import Cell from "@/components/Cell";
-import styles from "./board.module.css";
+import { useMemo, useState } from 'react';
+
+import CBoard from '@/lib/board';
+import CCell from '@/lib/cell';
+import { ValidMoves } from '@/lib/piece';
+
+import Cell from '@/components/Cell';
+
+import styles from './board.module.css';
 
 function Board() {
   const [board, setBoard] = useState<CCell[]>(CBoard.initialBoard());
@@ -13,13 +16,9 @@ function Board() {
   }, []);
 
   return (
-    <section className={`${styles["chess-board"]}`}>
+    <section className={`${styles['chess-board']}`}>
       {board.map((cell, idx) => (
-        <Cell
-          position={cell.Position}
-          pieceNotation={cell.getPieceNotation()}
-          key={idx}
-        />
+        <Cell position={cell.Position} pieceNotation={cell.getPieceNotation()} key={idx} />
       ))}
     </section>
   );

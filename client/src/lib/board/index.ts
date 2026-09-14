@@ -1,6 +1,7 @@
-import CCell from "@/lib/cell";
-import { PieceColor, PieceType } from "../piece";
-import { MoveVectors, Coordinates } from "@/lib/configs/vectors";
+import CCell from '@/lib/cell';
+import { Coordinates, MoveVectors } from '@/lib/configs/vectors';
+
+import { PieceColor, PieceType } from '../piece';
 
 class CBoard {
   private static PIECE_ROWS = { WHITE: [6, 7], BLACK: [0, 1] };
@@ -35,11 +36,7 @@ class CBoard {
     return row * 8 + col;
   }
 
-  static moveFrom(
-    position: number,
-    direction: string,
-    step: number = 1,
-  ): number {
+  static moveFrom(position: number, direction: string, step: number = 1): number {
     if (position === -1 || !step) return -1;
     const { x, y }: Coordinates = MoveVectors[direction];
     const newRow = CBoard.getRowIndex(position) + step * x;
@@ -51,8 +48,7 @@ class CBoard {
 
   static initialBoard(): CCell[] {
     const isPieceRow = (row: number): boolean =>
-      CBoard.PIECE_ROWS.WHITE.includes(row) ||
-      CBoard.PIECE_ROWS.BLACK.includes(row);
+      CBoard.PIECE_ROWS.WHITE.includes(row) || CBoard.PIECE_ROWS.BLACK.includes(row);
 
     const isPawnRow = (row: number): boolean =>
       row === this.PAWN_ROWS.WHITE || row === this.PAWN_ROWS.BLACK;

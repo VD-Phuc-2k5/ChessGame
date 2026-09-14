@@ -1,16 +1,16 @@
-import ValidMoves from "./validMoves";
+import ValidMoves from './validMoves';
 
 enum PieceType {
-  "Pawn" = "P",
-  "Rook" = "R",
-  "Knight" = "N",
-  "Bishop" = "B",
-  "Queen" = "Q",
-  "King" = "K",
+  Pawn = 'P',
+  Rook = 'R',
+  Knight = 'N',
+  Bishop = 'B',
+  Queen = 'Q',
+  King = 'K',
 }
 enum PieceColor {
-  "White" = "w",
-  "Black" = "b",
+  White = 'w',
+  Black = 'b',
 }
 
 export interface IPiece {

@@ -1,4 +1,4 @@
-import { IPiece } from "../piece";
+import { IPiece } from '../piece';
 
 class CCell {
   private position: number;
@@ -11,9 +11,7 @@ class CCell {
 
   getPieceNotation(): string | null {
     const hasPiece = this.piece !== null;
-    return hasPiece
-      ? `${this.piece!.pieceColor}${this.piece!.pieceType}`
-      : null;
+    return hasPiece ? `${this.piece!.pieceColor}${this.piece!.pieceType}` : null;
   }
 
   get Position(): number {
