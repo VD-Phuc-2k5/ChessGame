@@ -1,8 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import CBoard from '@/lib/board';
-import CCell from '@/lib/cell';
-import { ValidMoves } from '@/lib/piece';
+import { CBoard, CCell, ValidMoves } from '@chess/domain';
 
 import Cell from '@/components/Cell';
 

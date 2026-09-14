@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 
-import CBoard from '@/lib/board';
+import { CBoard } from '@chess/domain';
 
 import Piece from '@/components/Piece';
 

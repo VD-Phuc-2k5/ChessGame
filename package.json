@@ -1,0 +1,32 @@
+{
+  "name": "ChessGame",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "pnpm --filter @chess/core build && pnpm --filter @chess/domain build && pnpm --filter client build",
+    "dev:client": "pnpm --filter @chess/core build && pnpm --filter @chess/domain build && pnpm --filter client dev",
+    "typecheck": "pnpm --filter @chess/core build && pnpm --filter @chess/domain build && pnpm --filter client typecheck",
+    "test": "pnpm --filter @chess/core test && pnpm --filter @chess/domain test && pnpm --filter client test",
+    "test:watch": "pnpm --parallel --filter @chess/core --filter @chess/domain --filter client test:watch",
+    "format": "pnpm --filter @chess/core format && pnpm --filter @chess/domain format && pnpm --filter client format",
+    "format:check": "pnpm --filter @chess/core format:check && pnpm --filter @chess/domain format:check && pnpm --filter client format:check",
+    "prepare": "husky"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@11.20.0",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "11.20.0",
+      "onFail": "download"
+    }
+  },
+  "type": "module",
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "prettier": "^3.9.6"
+  }
+}
