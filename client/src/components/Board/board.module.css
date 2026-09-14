@@ -1,5 +1,0 @@
-@reference "../../app/globals.css";
-
-.chess-board {
-  @apply mx-auto my-8 flex aspect-square w-11/12 flex-wrap overflow-hidden rounded bg-black p-2 md:w-8/12 lg:w-5/12;
-}
