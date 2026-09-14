@@ -1,14 +1,10 @@
-import { PieceType, PieceColor } from ".";
-import CBoard from "../board";
+import { PieceColor, PieceType } from '.';
+import CBoard from '../board';
 
 class ValidMoves {
   static table: Map<string, number[]> = new Map();
 
-  static hashKey(
-    color: PieceColor,
-    piece: PieceType,
-    position: number,
-  ): string {
+  static hashKey(color: PieceColor, piece: PieceType, position: number): string {
     return `${color}${piece}-${position}`;
   }
 
@@ -22,11 +18,7 @@ class ValidMoves {
     };
   }
 
-  private static generatePawnMoves(
-    color: PieceColor,
-    piece: PieceType,
-    position: number,
-  ) {
+  private static generatePawnMoves(color: PieceColor, piece: PieceType, position: number) {
     const key = ValidMoves.hashKey(color, piece, position);
     const row = CBoard.getRowIndex(position);
     const validMoves = ValidMoves.Moves();
@@ -35,13 +27,13 @@ class ValidMoves {
       const step = row === 6 ? 2 : row === 7 ? 0 : 1;
       // move forward
       for (let i = 0; i <= step; i++) {
-        validMoves.add(CBoard.moveFrom(position, "up", i));
+        validMoves.add(CBoard.moveFrom(position, 'up', i));
       }
 
       // enPassant move
       if (row === 3) {
-        validMoves.add(CBoard.moveFrom(position, "upLeft"));
-        validMoves.add(CBoard.moveFrom(position, "upRight"));
+        validMoves.add(CBoard.moveFrom(position, 'upLeft'));
+        validMoves.add(CBoard.moveFrom(position, 'upRight'));
       }
 
       ValidMoves.table.set(key, validMoves.get());
@@ -49,13 +41,13 @@ class ValidMoves {
       const step = row === 1 ? 2 : row === 0 ? 0 : 1;
       // move forward
       for (let i = 0; i <= step; i++) {
-        validMoves.add(CBoard.moveFrom(position, "down", i));
+        validMoves.add(CBoard.moveFrom(position, 'down', i));
       }
 
       // enPassant move
       if (row === 4) {
-        validMoves.add(CBoard.moveFrom(position, "downLeft"));
-        validMoves.add(CBoard.moveFrom(position, "downRight"));
+        validMoves.add(CBoard.moveFrom(position, 'downLeft'));
+        validMoves.add(CBoard.moveFrom(position, 'downRight'));
       }
 
       ValidMoves.table.set(key, validMoves.get());
@@ -63,16 +55,8 @@ class ValidMoves {
   }
 
   private static generateKnightMoves(position: number) {
-    const whiteKey = ValidMoves.hashKey(
-      PieceColor.White,
-      PieceType.Knight,
-      position,
-    );
-    const blackKey = ValidMoves.hashKey(
-      PieceColor.Black,
-      PieceType.Knight,
-      position,
-    );
+    const whiteKey = ValidMoves.hashKey(PieceColor.White, PieceType.Knight, position);
+    const blackKey = ValidMoves.hashKey(PieceColor.Black, PieceType.Knight, position);
     const validMoves = ValidMoves.Moves();
 
     const addKnightValidMove = (direction1: string, direction2: string) => {
@@ -80,34 +64,26 @@ class ValidMoves {
         (() => {
           const current = CBoard.moveFrom(position, direction1, 2);
           return CBoard.moveFrom(current, direction2);
-        })(),
+        })()
       );
     };
 
-    addKnightValidMove("up", "left");
-    addKnightValidMove("up", "right");
-    addKnightValidMove("down", "left");
-    addKnightValidMove("down", "right");
-    addKnightValidMove("left", "up");
-    addKnightValidMove("left", "down");
-    addKnightValidMove("right", "up");
-    addKnightValidMove("right", "down");
+    addKnightValidMove('up', 'left');
+    addKnightValidMove('up', 'right');
+    addKnightValidMove('down', 'left');
+    addKnightValidMove('down', 'right');
+    addKnightValidMove('left', 'up');
+    addKnightValidMove('left', 'down');
+    addKnightValidMove('right', 'up');
+    addKnightValidMove('right', 'down');
 
     ValidMoves.table.set(whiteKey, validMoves.get());
     ValidMoves.table.set(blackKey, validMoves.get());
   }
 
   private static generateBishopMoves(position: number) {
-    const whiteKey = ValidMoves.hashKey(
-      PieceColor.White,
-      PieceType.Bishop,
-      position,
-    );
-    const blackKey = ValidMoves.hashKey(
-      PieceColor.Black,
-      PieceType.Bishop,
-      position,
-    );
+    const whiteKey = ValidMoves.hashKey(PieceColor.White, PieceType.Bishop, position);
+    const blackKey = ValidMoves.hashKey(PieceColor.Black, PieceType.Bishop, position);
     const validMoves = ValidMoves.Moves();
 
     const addBishopValidMove = (direction: string) => {
@@ -118,26 +94,18 @@ class ValidMoves {
       }
     };
 
-    addBishopValidMove("upLeft");
-    addBishopValidMove("upRight");
-    addBishopValidMove("downLeft");
-    addBishopValidMove("downRight");
+    addBishopValidMove('upLeft');
+    addBishopValidMove('upRight');
+    addBishopValidMove('downLeft');
+    addBishopValidMove('downRight');
 
     ValidMoves.table.set(whiteKey, validMoves.get());
     ValidMoves.table.set(blackKey, validMoves.get());
   }
 
   private static generateRookMoves(position: number) {
-    const whiteKey = ValidMoves.hashKey(
-      PieceColor.White,
-      PieceType.Rook,
-      position,
-    );
-    const blackKey = ValidMoves.hashKey(
-      PieceColor.Black,
-      PieceType.Rook,
-      position,
-    );
+    const whiteKey = ValidMoves.hashKey(PieceColor.White, PieceType.Rook, position);
+    const blackKey = ValidMoves.hashKey(PieceColor.Black, PieceType.Rook, position);
     const validMoves = ValidMoves.Moves();
 
     const addRookValidMove = (direction: string) => {
@@ -148,26 +116,18 @@ class ValidMoves {
       }
     };
 
-    addRookValidMove("up");
-    addRookValidMove("down");
-    addRookValidMove("left");
-    addRookValidMove("right");
+    addRookValidMove('up');
+    addRookValidMove('down');
+    addRookValidMove('left');
+    addRookValidMove('right');
 
     ValidMoves.table.set(whiteKey, validMoves.get());
     ValidMoves.table.set(blackKey, validMoves.get());
   }
 
   private static generateQueenMoves(position: number) {
-    const whiteKey = ValidMoves.hashKey(
-      PieceColor.White,
-      PieceType.Queen,
-      position,
-    );
-    const blackKey = ValidMoves.hashKey(
-      PieceColor.Black,
-      PieceType.Queen,
-      position,
-    );
+    const whiteKey = ValidMoves.hashKey(PieceColor.White, PieceType.Queen, position);
+    const blackKey = ValidMoves.hashKey(PieceColor.Black, PieceType.Queen, position);
     const validMoves = ValidMoves.Moves();
 
     const addQueenValidMove = (direction: string) => {
@@ -178,14 +138,14 @@ class ValidMoves {
       }
     };
 
-    addQueenValidMove("up");
-    addQueenValidMove("upLeft");
-    addQueenValidMove("upRight");
-    addQueenValidMove("down");
-    addQueenValidMove("downLeft");
-    addQueenValidMove("downRight");
-    addQueenValidMove("left");
-    addQueenValidMove("right");
+    addQueenValidMove('up');
+    addQueenValidMove('upLeft');
+    addQueenValidMove('upRight');
+    addQueenValidMove('down');
+    addQueenValidMove('downLeft');
+    addQueenValidMove('downRight');
+    addQueenValidMove('left');
+    addQueenValidMove('right');
 
     ValidMoves.table.set(whiteKey, validMoves.get());
     ValidMoves.table.set(blackKey, validMoves.get());
