@@ -1,0 +1,10 @@
+node_modules
+dist
+coverage
+.next
+out
+build
+.git
+pnpm-lock.yaml
+*.tsbuildinfo
+*.ico
