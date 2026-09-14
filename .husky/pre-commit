@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+pnpm format:check
+pnpm typecheck
+pnpm test --runInBand
+pnpm --filter client lint
