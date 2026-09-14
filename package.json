@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "build": "pnpm --filter @chess/core build && pnpm --filter @chess/domain build && pnpm --filter client build",
-    "dev:client": "pnpm --filter client dev",
-    "typecheck": "pnpm --filter @chess/core typecheck && pnpm --filter @chess/domain typecheck && pnpm --filter client exec tsc --noEmit",
+    "dev:client": "pnpm --filter @chess/core build && pnpm --filter @chess/domain build && pnpm --filter client dev",
+    "typecheck": "pnpm --filter @chess/core build && pnpm --filter @chess/domain build && pnpm --filter client typecheck",
     "test": "pnpm --filter @chess/core test && pnpm --filter @chess/domain test && pnpm --filter client test",
-    "test:watch": "pnpm --filter @chess/core test:watch && pnpm --filter @chess/domain test:watch && pnpm --filter client test:watch",
+    "test:watch": "pnpm --parallel --filter @chess/core --filter @chess/domain --filter client test:watch",
     "format": "pnpm --filter @chess/core format && pnpm --filter @chess/domain format && pnpm --filter client format",
     "format:check": "pnpm --filter @chess/core format:check && pnpm --filter @chess/domain format:check && pnpm --filter client format:check",
     "prepare": "husky"
