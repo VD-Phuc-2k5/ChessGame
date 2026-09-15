@@ -1,6 +1,7 @@
 import { JSX } from 'react';
 
-import { Board, ICell } from '@chess/core';
+import { ICell } from '@chess/core';
+import { Board } from '@chess/domain';
 
 import CellComponent from './cell';
 
