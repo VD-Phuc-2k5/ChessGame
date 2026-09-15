@@ -1,4 +1,4 @@
-import { IColor, ICell } from '../interfaces/index.js';
+import { IColor, ICell } from '@chess/core';
 
 abstract class Cell implements ICell {
   protected color: IColor | null;

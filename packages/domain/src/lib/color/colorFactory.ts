@@ -1,5 +1,4 @@
-import { IColor } from '../interfaces/index.js';
-import { ColorType } from '../types/index.js';
+import { IColor } from '@chess/core';
 import { WhiteColor } from './whiteColor.js';
 import { BlackColor } from './blackColor.js';
 

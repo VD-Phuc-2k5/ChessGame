@@ -1,5 +1,4 @@
-import { Colors } from '../constants/index.js';
-import { IColor } from '../interfaces/index.js';
+import { Colors, IColor } from '@chess/core';
 
 class BlackColor implements IColor {
   private static instance: BlackColor;

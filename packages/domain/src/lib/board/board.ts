@@ -1,5 +1,4 @@
-import { IBoard, ICell } from '../interfaces/index.js';
-import { FILE_COUNT, RANK_COUNT } from '../constants/index.js';
+import { FILE_COUNT, RANK_COUNT, IBoard, ICell } from '@chess/core';
 import { WhiteCell, BlackCell } from '../cell/index.js';
 
 class Board implements IBoard {
