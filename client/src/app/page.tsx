@@ -1,6 +1,4 @@
-'use client';
-
-import Board from '@/components/Board';
+import Board from '../components/board';
 
 function HomePage() {
   return <Board />;
