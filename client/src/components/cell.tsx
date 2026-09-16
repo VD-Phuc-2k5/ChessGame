@@ -1,4 +1,4 @@
-import { JSX } from 'react';
+import { JSX, memo } from 'react';
 
 interface CellComponentProps {
   color: string;
@@ -7,10 +7,11 @@ interface CellComponentProps {
 
 function CellComponent(props: CellComponentProps): JSX.Element {
   return (
-    <div style={{ backgroundColor: props.color }} className="grid h-full w-full place-items-center">
-      {props.coordinate}
-    </div>
+    <div
+      style={{ backgroundColor: props.color }}
+      className="grid h-full w-full place-items-center"
+    ></div>
   );
 }
 
-export default CellComponent;
+export default memo(CellComponent);
