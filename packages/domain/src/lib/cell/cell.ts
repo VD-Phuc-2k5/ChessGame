@@ -3,7 +3,8 @@ import { IColor, ICell } from '@chess/core';
 abstract class Cell implements ICell {
   protected color: IColor | null;
 
-  constructor() {
+  constructor(protected cellCoordinate: string) {
+    this.cellCoordinate = cellCoordinate;
     this.color = null;
     this.applyColor();
   }
@@ -15,6 +16,10 @@ abstract class Cell implements ICell {
       return this.color.getColor();
     }
     throw new Error('No color found');
+  }
+
+  public getCoordinate(): string {
+    return this.cellCoordinate;
   }
 }
 

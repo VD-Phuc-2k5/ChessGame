@@ -1,4 +1,5 @@
 const RANK_COUNT = 8;
 const FILE_COUNT = 8;
+const FILE_ASCII_OFFSET = 96;
 
-export { RANK_COUNT, FILE_COUNT };
+export { RANK_COUNT, FILE_COUNT, FILE_ASCII_OFFSET };

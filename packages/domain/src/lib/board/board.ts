@@ -1,8 +1,9 @@
-import { FILE_COUNT, RANK_COUNT, IBoard, ICell } from '@chess/core';
+import { FILE_COUNT, FILE_ASCII_OFFSET, RANK_COUNT, IBoard, ICell } from '@chess/core';
 import { WhiteCell, BlackCell } from '../cell/index.js';
+import { BoardIterator } from './boardIterator.js';
 
-class Board implements IBoard {
-  public cells: ICell[][] = [];
+class Board implements IBoard, Iterable<ICell> {
+  public cells: Map<string, ICell> = new Map();
   protected static instance: Board | null = null;
 
   private constructor(public size: number) {
@@ -17,17 +18,18 @@ class Board implements IBoard {
   }
 
   protected initialize(): void {
-    for (let rank: number = 0; rank < RANK_COUNT; rank++) {
-      const row: ICell[] = [];
-      for (let file: number = 0; file < FILE_COUNT; file++) {
-        if ((rank + file) % 2 === 0) {
-          row.push(new WhiteCell());
-        } else {
-          row.push(new BlackCell());
-        }
+    for (let rank: number = RANK_COUNT; rank >= 1; rank--) {
+      for (let file: number = 1; file <= FILE_COUNT; file++) {
+        const coordinate = `${String.fromCharCode(FILE_ASCII_OFFSET + file)}${rank}`;
+        const cell: ICell =
+          (rank + file) % 2 === 0 ? new WhiteCell(coordinate) : new BlackCell(coordinate);
+        this.cells.set(coordinate, cell);
       }
-      this.cells.push(row);
     }
+  }
+
+  [Symbol.iterator](): Iterator<ICell> {
+    return new BoardIterator(this.cells);
   }
 }
 
