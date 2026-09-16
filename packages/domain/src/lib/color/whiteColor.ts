@@ -8,6 +8,10 @@ class WhiteColor implements IColor {
     return Colors.white;
   }
 
+  public getSideName(): string {
+    return 'white';
+  }
+
   public static getInstance(): WhiteColor {
     if (!WhiteColor.instance) {
       WhiteColor.instance = new WhiteColor();

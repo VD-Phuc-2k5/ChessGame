@@ -8,6 +8,10 @@ class BlackColor implements IColor {
     return Colors.black;
   }
 
+  public getSideName(): string {
+    return 'black';
+  }
+
   public static getInstance(): BlackColor {
     if (!BlackColor.instance) {
       BlackColor.instance = new BlackColor();

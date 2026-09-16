@@ -1,7 +1,8 @@
-import { IColor, ICell } from '@chess/core';
+import { IColor, ICell, IPiece } from '@chess/core';
 
 abstract class Cell implements ICell {
   protected color: IColor | null;
+  protected piece: IPiece | null = null;
 
   constructor(protected cellCoordinate: string) {
     this.cellCoordinate = cellCoordinate;
@@ -16,6 +17,14 @@ abstract class Cell implements ICell {
       return this.color.getColor();
     }
     throw new Error('No color found');
+  }
+
+  public getPiece(): IPiece | null {
+    return this.piece;
+  }
+
+  public setPiece(piece: IPiece): void {
+    this.piece = piece;
   }
 
   public getCoordinate(): string {
