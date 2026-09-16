@@ -1,4 +1,5 @@
 interface IColor {
+  getSideName(): string;
   getColor(): string;
 }
 

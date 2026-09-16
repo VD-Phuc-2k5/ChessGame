@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build:core": "pnpm --filter @chess/core build",
+    "build:domain": "pnpm --filter @chess/domain build",
+    "build:client": "pnpm --filter client build",
     "build": "pnpm --filter @chess/core build && pnpm --filter @chess/domain build && pnpm --filter client build",
     "dev:client": "pnpm --filter @chess/core build && pnpm --filter @chess/domain build && pnpm --filter client dev",
     "typecheck": "pnpm --filter @chess/core build && pnpm --filter @chess/domain build && pnpm --filter client typecheck",
