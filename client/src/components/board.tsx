@@ -19,8 +19,15 @@ function BoardComponent(): JSX.Element {
   const orderedCells: JSX.Element[] = useMemo(
     (): JSX.Element[] =>
       (isFlipped ? [...cells].reverse() : cells).map((cell: ICell): JSX.Element => (
-        <div key={cell.getCoordinate()} className="grid h-full w-full place-items-center">
-          <CellComponent color={cell.getColor()} coordinate={cell.getCoordinate()} />
+        <div
+          key={cell.getCoordinate()}
+          className="grid aspect-square h-full w-full place-items-center"
+        >
+          <CellComponent
+            color={cell.getColor()}
+            coordinate={cell.getCoordinate()}
+            piece={cell.getPiece()}
+          />
         </div>
       )),
     [cells, isFlipped]
@@ -50,7 +57,10 @@ function BoardComponent(): JSX.Element {
       <div style={{ perspective: '1000px' }}>
         <div ref={boardRef} className="flex flex-col items-end will-change-transform">
           <div className="flex h-full w-full items-end">
-            <div className="grid w-8 grid-rows-8" style={{ height: boardSize }}>
+            <div
+              className="grid w-8 grid-rows-8 border-y-4 border-transparent"
+              style={{ height: boardSize }}
+            >
               {fileNumbers.map((number: number, index: number): JSX.Element => (
                 <div key={index} className="grid h-full place-items-center">
                   <span className="text-lg font-bold">{number}</span>
@@ -64,7 +74,10 @@ function BoardComponent(): JSX.Element {
               {orderedCells}
             </div>
           </div>
-          <div className="grid grid-cols-8" style={{ width: boardSize, height: 32 }}>
+          <div
+            className="grid grid-cols-8 border-x-4 border-transparent"
+            style={{ width: boardSize, height: 32 }}
+          >
             {rankLetters.map((letter: string, index: number): JSX.Element => (
               <div key={index} className="grid h-8 w-full place-items-center">
                 <span className="text-lg font-bold">{letter}</span>
