@@ -1,4 +1,4 @@
-import { IPiece, IColor, PieceSymbolType } from '@chess/core';
+import { IPiece, IColor, PieceSymbol, PieceSymbolType } from '@chess/core';
 
 abstract class Piece implements IPiece {
   constructor(
@@ -8,7 +8,11 @@ abstract class Piece implements IPiece {
 
   public toSymbol(): string {
     const color: string = this.side.getSideName();
-    return `${color[0]}${this.type[0]}`;
+    let symbol: string = PieceSymbol[this.type];
+    if (symbol === '') {
+      symbol = 'P';
+    }
+    return `${color[0]}${symbol}`;
   }
 }
 
