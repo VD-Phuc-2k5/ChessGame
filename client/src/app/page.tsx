@@ -1,9 +1,11 @@
 'use client';
 
-import Board from '@/components/Board';
+import { JSX } from 'react/jsx-dev-runtime';
 
-function HomePage() {
-  return <Board />;
+import BoardSection from '@/components/board/boardSection';
+
+function HomePage(): JSX.Element {
+  return <BoardSection />;
 }
 
 export default HomePage;
