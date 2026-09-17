@@ -1,13 +1,17 @@
-import { FILE_COUNT, FILE_ASCII_OFFSET, RANK_COUNT, IBoard, ICell, IPiece } from '@chess/core';
+import { FILES, RANKS, FILE_ASCII_OFFSET, IBoard, ICell, IPiece } from '@chess/core';
 import { WhiteCell, BlackCell } from '../cell/index.js';
 import { BoardIterator } from './boardIterator.js';
 import { PieceFactory } from '../piece/pieceFactory.js';
 
 class Board implements IBoard, Iterable<ICell> {
-  public cells: Map<string, ICell> = new Map();
+  protected cells: Map<string, ICell> = new Map();
   protected static instance: Board | null = null;
+  protected fileCount: number;
+  protected rankCount: number;
 
   private constructor(public size: number) {
+    this.fileCount = FILES.size;
+    this.rankCount = RANKS.size;
     this.initialize();
   }
 
@@ -16,6 +20,14 @@ class Board implements IBoard, Iterable<ICell> {
       Board.instance = new Board(size);
     }
     return Board.instance;
+  }
+
+  public getFiles(): string[] {
+    return [...FILES.values()];
+  }
+
+  public getRanks(): string[] {
+    return [...RANKS.values()];
   }
 
   protected initialize(): void {
@@ -31,12 +43,13 @@ class Board implements IBoard, Iterable<ICell> {
   }
 
   protected initializeCells(): void {
-    for (let rank: number = RANK_COUNT; rank >= 1; rank--) {
-      for (let file: number = 1; file <= FILE_COUNT; file++) {
-        const coordinate = `${String.fromCharCode(FILE_ASCII_OFFSET + file)}${rank}`;
-        const cell: ICell =
-          (rank + file) % 2 === 0 ? new WhiteCell(coordinate) : new BlackCell(coordinate);
-        this.cells.set(coordinate, cell);
+    for (let file: number = 1; file <= this.fileCount; file++) {
+      for (let rank: number = 1; rank <= this.rankCount; rank++) {
+        const rankDigit: string = RANKS.get(rank)!;
+        const fileLetter: string = FILES.get(file)!;
+        const coordinate: string = `${rankDigit}${fileLetter}`;
+        const isWhite: boolean = (file + rank) % 2 === 0;
+        this.cells.set(coordinate, isWhite ? new WhiteCell(coordinate) : new BlackCell(coordinate));
       }
     }
   }
@@ -51,7 +64,7 @@ class Board implements IBoard, Iterable<ICell> {
     this.placePiece('g1', PieceFactory.createWhiteKnight());
     this.placePiece('h1', PieceFactory.createWhiteRook());
 
-    for (let file: number = 1; file <= FILE_COUNT; file++) {
+    for (let file: number = 1; file <= this.fileCount; file++) {
       const coordinate = `${String.fromCharCode(FILE_ASCII_OFFSET + file)}2`;
       this.placePiece(coordinate, PieceFactory.createWhitePawn());
     }
@@ -65,7 +78,7 @@ class Board implements IBoard, Iterable<ICell> {
     this.placePiece('g8', PieceFactory.createBlackKnight());
     this.placePiece('h8', PieceFactory.createBlackRook());
 
-    for (let file: number = 1; file <= FILE_COUNT; file++) {
+    for (let file: number = 1; file <= this.fileCount; file++) {
       const coordinate = `${String.fromCharCode(FILE_ASCII_OFFSET + file)}7`;
       this.placePiece(coordinate, PieceFactory.createBlackPawn());
     }
