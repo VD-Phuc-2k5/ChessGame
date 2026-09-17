@@ -1,21 +1,29 @@
-import { JSX, RefObject, useRef } from 'react';
+'use client';
+
+import { JSX, RefObject, useCallback, useRef } from 'react';
 
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 
-type Orientation = 'white' | 'black';
+import { BoardOrientationControls, type Orientation } from './boardOrientationControls';
 
-interface BoardOrientationProps {
+interface IBoardOrientationProps {
   boardRef: RefObject<HTMLDivElement | null>;
   orientation: Orientation;
   onRotate: (orientation: Orientation) => void;
 }
 
-function BoardOrientation({ boardRef, orientation, onRotate }: BoardOrientationProps): JSX.Element {
+function BoardOrientation({
+  boardRef,
+  orientation,
+  onRotate,
+}: IBoardOrientationProps): JSX.Element {
   const darkOverlayRef: RefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(null);
   const flashOverlayRef: RefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(null);
   const timelineRef: RefObject<gsap.core.Timeline | null> = useRef<gsap.core.Timeline | null>(null);
   const targetRef: RefObject<Orientation> = useRef<Orientation>(orientation);
+
+  targetRef.current = orientation;
 
   useGSAP(
     (): void => {
@@ -24,23 +32,12 @@ function BoardOrientation({ boardRef, orientation, onRotate }: BoardOrientationP
       timeline
         .to(
           boardRef.current,
-          {
-            scale: 1.25,
-            z: 120,
-            duration: 0.9,
-            ease: 'power2.in',
-            force3D: true,
-          },
+          { scale: 1.25, z: 120, duration: 0.9, ease: 'power2.in', force3D: true },
           0
         )
         .to(
           boardRef.current,
-          {
-            rotationY: 180,
-            duration: 1.1,
-            ease: 'power2.inOut',
-            force3D: true,
-          },
+          { rotationY: 180, duration: 1.1, ease: 'power2.inOut', force3D: true },
           0
         )
         .to(darkOverlayRef.current, { autoAlpha: 1, duration: 1.0, ease: 'power1.in' }, 0.2)
@@ -66,39 +63,24 @@ function BoardOrientation({ boardRef, orientation, onRotate }: BoardOrientationP
     { dependencies: [onRotate] }
   );
 
-  const handleRotate: (target: Orientation) => void = (target: Orientation): void => {
-    if (target === orientation || timelineRef.current === null || timelineRef.current.isActive()) {
-      return;
-    }
-    targetRef.current = target;
-    timelineRef.current.restart();
-  };
+  const handleRotate: (target: Orientation) => void = useCallback(
+    (target: Orientation): void => {
+      if (target === orientation || !timelineRef.current || timelineRef.current.isActive()) {
+        return;
+      }
+      targetRef.current = target;
+      timelineRef.current.restart();
+    },
+    [orientation]
+  );
 
   return (
     <>
-      <div className="fixed right-6 bottom-6 z-50 flex flex-col gap-3">
-        <button
-          type="button"
-          onClick={(): void => handleRotate('black')}
-          aria-label="Rotate to black side"
-          className={`grid h-10 w-10 cursor-pointer place-items-center rounded-full border-2 border-white/40 bg-black text-white shadow-lg transition-transform hover:scale-110 ${orientation === 'black' ? 'ring-2 ring-white' : ''}`}
-        >
-          ♟
-        </button>
-        <button
-          type="button"
-          onClick={(): void => handleRotate('white')}
-          aria-label="Rotate to white side"
-          className={`grid h-10 w-10 cursor-pointer place-items-center rounded-full border-2 border-black/40 bg-white text-black shadow-lg transition-transform hover:scale-110 ${orientation === 'white' ? 'ring-2 ring-black' : ''}`}
-        >
-          ♟
-        </button>
-      </div>
+      <BoardOrientationControls orientation={orientation} onRotate={handleRotate} />
       <div ref={darkOverlayRef} className="board-orientation-overlay-dark" />
       <div ref={flashOverlayRef} className="board-orientation-overlay-flash" />
     </>
   );
 }
 
-export default BoardOrientation;
-export type { Orientation };
+export { BoardOrientation };
