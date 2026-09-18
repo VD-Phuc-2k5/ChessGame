@@ -1,9 +1,9 @@
 import { ICell } from './iCell.js';
 
 interface IBoard {
-  size: number;
   getFiles(): string[];
   getRanks(): string[];
+  setSize(size: number): void;
   [Symbol.iterator](): Iterator<ICell>;
 }
 
