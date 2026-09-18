@@ -1,25 +1,31 @@
-import { FILES, RANKS, FILE_ASCII_OFFSET, IBoard, ICell, IPiece } from '@chess/core';
+import { FILES, RANKS, IBoard, ICell, IPiece, IPosition } from '@chess/core';
 import { WhiteCell, BlackCell } from '../cell/index.js';
 import { BoardIterator } from './boardIterator.js';
 import { PieceFactory } from '../piece/pieceFactory.js';
+import { Position } from '../position/position.js';
 
 class Board implements IBoard, Iterable<ICell> {
   protected cells: Map<string, ICell> = new Map();
   protected static instance: Board | null = null;
-  protected fileCount: number;
-  protected rankCount: number;
+  protected readonly fileCount: number;
+  protected readonly rankCount: number;
+  public size: number = 500;
 
-  private constructor(public size: number) {
+  private constructor() {
     this.fileCount = FILES.size;
     this.rankCount = RANKS.size;
     this.initialize();
   }
 
-  static getBoardInstance(size: number): Board {
+  static getBoardInstance(): Board {
     if (Board.instance === null) {
-      Board.instance = new Board(size);
+      Board.instance = new Board();
     }
     return Board.instance;
+  }
+
+  public setSize(size: number): void {
+    this.size = size;
   }
 
   public getFiles(): string[] {
@@ -35,52 +41,52 @@ class Board implements IBoard, Iterable<ICell> {
     this.setupPieces();
   }
 
-  protected placePiece(coordinate: string, piece: IPiece): void {
-    const cell: ICell | undefined = this.cells.get(coordinate);
+  protected placePiece(position: IPosition, piece: IPiece): void {
+    const cell: ICell | undefined = this.cells.get(position.toString());
     if (cell) {
       cell.setPiece(piece);
     }
   }
 
   protected initializeCells(): void {
-    for (let file: number = 1; file <= this.fileCount; file++) {
-      for (let rank: number = 1; rank <= this.rankCount; rank++) {
-        const rankDigit: string = RANKS.get(rank)!;
-        const fileLetter: string = FILES.get(file)!;
-        const coordinate: string = `${rankDigit}${fileLetter}`;
+    for (let rank: number = 1; rank <= this.rankCount; rank++) {
+      for (let file: number = 1; file <= this.fileCount; file++) {
+        const position = Position.of(rank, file);
+        const coordinate: string = position.toString();
         const isWhite: boolean = (file + rank) % 2 === 0;
-        this.cells.set(coordinate, isWhite ? new WhiteCell(coordinate) : new BlackCell(coordinate));
+        const cell: WhiteCell | BlackCell = isWhite
+          ? new WhiteCell(position)
+          : new BlackCell(position);
+        this.cells.set(coordinate, cell);
       }
     }
   }
 
   protected setupPieces(): void {
-    this.placePiece('a1', PieceFactory.createWhiteRook());
-    this.placePiece('b1', PieceFactory.createWhiteKnight());
-    this.placePiece('c1', PieceFactory.createWhiteBishop());
-    this.placePiece('d1', PieceFactory.createWhiteQueen());
-    this.placePiece('e1', PieceFactory.createWhiteKing());
-    this.placePiece('f1', PieceFactory.createWhiteBishop());
-    this.placePiece('g1', PieceFactory.createWhiteKnight());
-    this.placePiece('h1', PieceFactory.createWhiteRook());
+    this.placePiece(Position.of(8, 1), PieceFactory.createWhiteRook());
+    this.placePiece(Position.of(8, 2), PieceFactory.createWhiteKnight());
+    this.placePiece(Position.of(8, 3), PieceFactory.createWhiteBishop());
+    this.placePiece(Position.of(8, 4), PieceFactory.createWhiteQueen());
+    this.placePiece(Position.of(8, 5), PieceFactory.createWhiteKing());
+    this.placePiece(Position.of(8, 6), PieceFactory.createWhiteBishop());
+    this.placePiece(Position.of(8, 7), PieceFactory.createWhiteKnight());
+    this.placePiece(Position.of(8, 8), PieceFactory.createWhiteRook());
 
     for (let file: number = 1; file <= this.fileCount; file++) {
-      const coordinate = `${String.fromCharCode(FILE_ASCII_OFFSET + file)}2`;
-      this.placePiece(coordinate, PieceFactory.createWhitePawn());
+      this.placePiece(Position.of(7, file), PieceFactory.createWhitePawn());
     }
 
-    this.placePiece('a8', PieceFactory.createBlackRook());
-    this.placePiece('b8', PieceFactory.createBlackKnight());
-    this.placePiece('c8', PieceFactory.createBlackBishop());
-    this.placePiece('d8', PieceFactory.createBlackQueen());
-    this.placePiece('e8', PieceFactory.createBlackKing());
-    this.placePiece('f8', PieceFactory.createBlackBishop());
-    this.placePiece('g8', PieceFactory.createBlackKnight());
-    this.placePiece('h8', PieceFactory.createBlackRook());
+    this.placePiece(Position.of(1, 1), PieceFactory.createBlackRook());
+    this.placePiece(Position.of(1, 2), PieceFactory.createBlackKnight());
+    this.placePiece(Position.of(1, 3), PieceFactory.createBlackBishop());
+    this.placePiece(Position.of(1, 4), PieceFactory.createBlackQueen());
+    this.placePiece(Position.of(1, 5), PieceFactory.createBlackKing());
+    this.placePiece(Position.of(1, 6), PieceFactory.createBlackBishop());
+    this.placePiece(Position.of(1, 7), PieceFactory.createBlackKnight());
+    this.placePiece(Position.of(1, 8), PieceFactory.createBlackRook());
 
     for (let file: number = 1; file <= this.fileCount; file++) {
-      const coordinate = `${String.fromCharCode(FILE_ASCII_OFFSET + file)}7`;
-      this.placePiece(coordinate, PieceFactory.createBlackPawn());
+      this.placePiece(Position.of(2, file), PieceFactory.createBlackPawn());
     }
   }
 
