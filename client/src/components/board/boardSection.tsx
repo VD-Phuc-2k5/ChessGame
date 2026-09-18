@@ -8,10 +8,10 @@ function BoardSection(): JSX.Element {
   return (
     <Board>
       <div className="flex items-end">
-        <Board.Files />
+        <Board.Ranks />
         <Board.Grid />
       </div>
-      <Board.Ranks />
+      <Board.Files />
     </Board>
   );
 }

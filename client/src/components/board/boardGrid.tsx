@@ -1,21 +1,21 @@
 import { useBoard } from '@/context/BoardContext';
-import { BOARD_SIZE, ICell } from '@chess/core';
+import { ICell } from '@chess/core';
 import { JSX } from 'react/jsx-dev-runtime';
 
 import CellComponent from './cell';
 
 function BoardGrid(): JSX.Element {
-  const { cells } = useBoard();
+  const { cells, size } = useBoard();
   return (
-    <div style={{ width: BOARD_SIZE, height: BOARD_SIZE }} className="grid grid-cols-8 border-4">
+    <div style={{ width: size, height: size }} className="grid grid-cols-8 border-4">
       {cells.map((cell: ICell): JSX.Element => (
         <div
-          key={cell.getCoordinate()}
+          key={cell.getPosition.toString()}
           className="grid aspect-square h-full w-full place-items-center"
         >
           <CellComponent
             color={cell.getColor()}
-            coordinate={cell.getCoordinate()}
+            coordinate={cell.getPosition().toString()}
             piece={cell.getPiece()}
           />
         </div>
