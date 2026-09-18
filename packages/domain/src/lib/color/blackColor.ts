@@ -1,4 +1,4 @@
-import { Colors, IColor } from '@chess/core';
+import { Colors, IColor, ColorType } from '@chess/core';
 
 class BlackColor implements IColor {
   private static instance: BlackColor;
@@ -8,7 +8,7 @@ class BlackColor implements IColor {
     return Colors.black;
   }
 
-  public getSideName(): string {
+  public getSideName(): ColorType {
     return 'black';
   }
 
