@@ -5,7 +5,7 @@ interface ICell {
   getColor(): string;
   getPiece(): IPiece | null;
   getPosition(): IPosition;
-  setPiece(piece: IPiece): void;
+  setPiece(piece: IPiece | null): void;
 }
 
 export { ICell };
