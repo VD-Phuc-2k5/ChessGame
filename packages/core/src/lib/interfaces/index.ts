@@ -6,3 +6,4 @@ export * from './iPosition.js';
 export * from './iMovement.js';
 export * from './iMove.js';
 export * from './iMoveValidator.js';
+export * from './iGameState.js';
