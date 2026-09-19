@@ -29,7 +29,7 @@ class Position implements IPosition {
   }
 
   public toString(): string {
-    return `${RANKS.get(this.rank)}${FILES.get(this.file)}`;
+    return `${FILES.get(this.file)}${RANKS.get(this.rank)}`;
   }
 
   private validate(): void {
