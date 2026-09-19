@@ -1,10 +1,11 @@
 import { IPiece } from './iPiece.js';
+import { IPosition } from './iPosition.js';
 
 interface ICell {
   getColor(): string;
   getPiece(): IPiece | null;
-  getCoordinate(): string;
-  setPiece(piece: IPiece): void;
+  getPosition(): IPosition;
+  setPiece(piece: IPiece | null): void;
 }
 
 export { ICell };

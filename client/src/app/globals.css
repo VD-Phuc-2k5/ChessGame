@@ -6,7 +6,248 @@
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  background: #111827;
+  color: #f3f4ed;
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+.chess-page {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(125, 211, 252, 0.16), transparent 34%),
+    linear-gradient(135deg, #1f2937 0%, #111827 72%);
+  animation: page-enter 700ms ease-out both;
+}
+
+.chess-page::before {
+  position: absolute;
+  inset: -12%;
+  z-index: -1;
+  content: '';
+  pointer-events: none;
+  opacity: 0.22;
+  background:
+    radial-gradient(circle, rgba(224, 242, 254, 0.8) 0 1px, transparent 1.5px) 0 0 / 83px 97px,
+    radial-gradient(circle, rgba(186, 230, 253, 0.6) 0 1.5px, transparent 2px) 31px 43px / 137px
+      151px,
+    radial-gradient(circle, rgba(125, 211, 252, 0.45) 0 1px, transparent 1.5px) 67px 19px / 191px
+      173px;
+  filter: blur(0.3px);
+  transform: translate3d(0, -8%, 0);
+  animation: falling-particles 11s linear infinite;
+}
+
+.chess-page::after {
+  position: absolute;
+  inset: -20%;
+  z-index: -1;
+  content: '';
+  pointer-events: none;
+  opacity: 0.2;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.95) 0 1px, transparent 2px) 12px 18px / 113px
+      139px,
+    radial-gradient(circle, rgba(186, 230, 253, 0.9) 0 1.5px, transparent 3px) 59px 72px / 173px
+      187px,
+    radial-gradient(circle, rgba(224, 242, 254, 0.8) 0 1px, transparent 2px) 91px 37px / 241px 223px;
+  filter: blur(0.2px);
+  transform: translate3d(0, -10%, 0);
+  animation: snow-fireflies 8s ease-in-out infinite alternate;
+}
+
+@keyframes falling-particles {
+  from {
+    transform: translate3d(0, -8%, 0);
+  }
+
+  to {
+    transform: translate3d(2%, 28%, 0);
+  }
+}
+
+@keyframes snow-fireflies {
+  from {
+    opacity: 0.12;
+    transform: translate3d(0, -10%, 0);
+  }
+
+  to {
+    opacity: 0.28;
+    transform: translate3d(-2%, 8%, 0);
+  }
+}
+
+/* Keep the content above the decorative weather layers. */
+.chess-page > div:first-child {
+  position: relative;
+  z-index: 1;
+}
+
+.board-layout {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  width: max-content;
+  max-width: 100%;
+}
+
+.board-main {
+  flex: 0 1 auto;
+  animation: board-enter 700ms 100ms ease-out both;
+}
+
+.board-sidebar {
+  animation: sidebar-enter 700ms 220ms ease-out both;
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes board-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes sidebar-enter {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.legal-move-overlay {
+  box-sizing: border-box;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 0 0 12px 4px rgba(255, 255, 255, 0.75),
+    0 0 8px 2px rgba(255, 255, 255, 0.55);
+}
+
+.clock-panel {
+  width: 500px;
+  margin-left: 2rem;
+}
+
+.history-panel {
+  min-height: 0;
+  height: 400px;
+  max-height: min(400px, calc(100vh - 2rem));
+  overflow: hidden;
+  animation: history-breathe 4s ease-in-out 1.2s infinite;
+}
+
+@keyframes history-breathe {
+  0%,
+  100% {
+    border-color: rgb(55 65 81);
+  }
+
+  50% {
+    border-color: rgb(75 85 99);
+  }
+}
+
+.history-scroll {
+  scrollbar-color: rgba(156, 163, 175, 0.7) transparent;
+  scrollbar-width: thin;
+}
+
+.history-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.history-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.history-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(156, 163, 175, 0.7);
+}
+
+.history-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(229, 231, 235, 0.9);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chess-page,
+  .board-main,
+  .board-sidebar,
+  .history-panel {
+    animation: none;
+  }
+
+  .chess-page::before {
+    animation: none;
+  }
+
+  .chess-page::after {
+    animation: none;
+  }
+}
+
+@media (max-width: 820px) {
+  .board-layout {
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+  }
+
+  .board-main {
+    width: min(100%, 532px);
+  }
+
+  .clock-panel {
+    width: min(calc(100% - 2rem), 500px);
+    margin-left: 2rem;
+  }
+
+  .history-panel {
+    width: min(100%, 256px);
+    height: min(400px, calc(100vh - 2rem));
+  }
+
+  .board-grid {
+    width: min(100%, 500px) !important;
+    height: auto !important;
+    aspect-ratio: 1;
+  }
+
+  .board-ranks {
+    height: auto !important;
+    aspect-ratio: 1 / 8;
+  }
+
+  .board-files {
+    width: min(100%, 500px) !important;
+  }
+
+  .board-grid > div {
+    height: 100%;
+  }
 }
 
 .board-orientation-overlay-dark {

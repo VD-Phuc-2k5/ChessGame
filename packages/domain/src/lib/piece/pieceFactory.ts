@@ -1,4 +1,4 @@
-import { IColor, IPiece } from '@chess/core';
+import { IColor, IPiece, ColorType, PieceSymbolType } from '@chess/core';
 import { ColorFactory } from '../color/colorFactory.js';
 import { Pawn } from './pawn.js';
 import { Rook } from './rook.js';
@@ -10,6 +10,20 @@ import { King } from './king.js';
 class PieceFactory {
   private static whiteColor: IColor = ColorFactory.createWhiteColor();
   private static blackColor: IColor = ColorFactory.createBlackColor();
+
+  static createPiece(side: ColorType, type: PieceSymbolType): IPiece {
+    const color: IColor = side === 'white' ? PieceFactory.whiteColor : PieceFactory.blackColor;
+    switch (type) {
+      case 'ROOK':
+        return new Rook(color);
+      case 'BISHOP':
+        return new Bishop(color);
+      case 'KNIGHT':
+        return new Knight(color);
+      default:
+        return new Queen(color);
+    }
+  }
 
   static createWhitePawn(): IPiece {
     return new Pawn(PieceFactory.whiteColor);
