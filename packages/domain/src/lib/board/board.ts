@@ -37,6 +37,10 @@ class Board implements IBoard, Iterable<ICell> {
     return [...RANKS.values()];
   }
 
+  public getCell(position: IPosition): ICell | undefined {
+    return this.cells.get(position.toString());
+  }
+
   protected initialize(): void {
     this.initializeCells();
     this.setupPieces();
@@ -47,6 +51,7 @@ class Board implements IBoard, Iterable<ICell> {
     const cell: ICell | undefined = this.cells.get(position.toString());
     if (cell) {
       cell.setPiece(piece);
+      piece.setPosition(position);
     }
   }
 

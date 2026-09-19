@@ -21,7 +21,7 @@ abstract class Cell implements ICell {
     return this.piece;
   }
 
-  public setPiece(piece: IPiece): void {
+  public setPiece(piece: IPiece | null): void {
     this.piece = piece;
   }
 
