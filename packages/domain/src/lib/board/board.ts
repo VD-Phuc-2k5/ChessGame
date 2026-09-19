@@ -1,8 +1,9 @@
-import { FILES, RANKS, IBoard, ICell, IPiece, IPosition } from '@chess/core';
+import { FILES, RANKS, IBoard, ICell, IPiece, IPosition, Direction } from '@chess/core';
 import { WhiteCell, BlackCell } from '../cell/index.js';
 import { BoardIterator } from './boardIterator.js';
 import { PieceFactory } from '../piece/pieceFactory.js';
 import { Position } from '../position/position.js';
+import { Offset } from '../offset/offset.js';
 
 class Board implements IBoard, Iterable<ICell> {
   protected cells: Map<string, ICell> = new Map();
@@ -39,6 +40,7 @@ class Board implements IBoard, Iterable<ICell> {
   protected initialize(): void {
     this.initializeCells();
     this.setupPieces();
+    this.initOffset();
   }
 
   protected placePiece(position: IPosition, piece: IPiece): void {
@@ -88,6 +90,25 @@ class Board implements IBoard, Iterable<ICell> {
     for (let file: number = 1; file <= this.fileCount; file++) {
       this.placePiece(Position.of(2, file), PieceFactory.createBlackPawn());
     }
+  }
+
+  protected initOffset(): void {
+    Offset.register(Direction.Top, [-1, 0]);
+    Offset.register(Direction.Bottom, [1, 0]);
+    Offset.register(Direction.Left, [0, -1]);
+    Offset.register(Direction.Right, [0, 1]);
+    Offset.register(Direction.TopLeft, [-1, -1]);
+    Offset.register(Direction.TopRight, [-1, 1]);
+    Offset.register(Direction.BottomLeft, [1, -1]);
+    Offset.register(Direction.BottomRight, [1, 1]);
+    Offset.register(Direction.Left2Top, [-2, -1]);
+    Offset.register(Direction.Left2Bottom, [2, -1]);
+    Offset.register(Direction.Right2Top, [-2, 1]);
+    Offset.register(Direction.Right2Bottom, [2, 1]);
+    Offset.register(Direction.LeftTop2, [-1, -2]);
+    Offset.register(Direction.RightTop2, [-1, 2]);
+    Offset.register(Direction.LeftBottom2, [1, -2]);
+    Offset.register(Direction.RightBottom2, [1, 2]);
   }
 
   [Symbol.iterator](): Iterator<ICell> {

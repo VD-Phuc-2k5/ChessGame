@@ -4,3 +4,4 @@ export * from './lib/color/index.js';
 export * from './lib/piece/index.js';
 export * from './lib/position/index.js';
 export * from './lib/movement/index.js';
+export * from './lib/offset/index.js';
