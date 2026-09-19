@@ -10,7 +10,7 @@ function BoardGrid(): JSX.Element {
     <div style={{ width: size, height: size }} className="grid grid-cols-8 border-4">
       {cells.map((cell: ICell): JSX.Element => (
         <div
-          key={cell.getPosition.toString()}
+          key={cell.getPosition().toString()}
           className="grid aspect-square h-full w-full place-items-center"
         >
           <CellComponent
