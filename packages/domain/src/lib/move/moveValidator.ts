@@ -1,16 +1,53 @@
 import { IBoard, IMove, IMoveValidator, IPiece, IPosition, ICell, ColorType } from '@chess/core';
+import { Position } from '../position/position.js';
+import { Board } from '../board/board.js';
 import { MoveGenerator } from './moveGenerator.js';
+import { AttackDetector } from '../attack/attackDetector.js';
 
 class MoveValidator implements IMoveValidator {
-  constructor(private readonly board: IBoard) {}
+  private static instance: MoveValidator | null = null;
+
+  private constructor(
+    private readonly board: IBoard,
+    private readonly attackDetector: AttackDetector
+  ) {}
+
+  public static getInstance(): MoveValidator {
+    if (!MoveValidator.instance) {
+      const board: IBoard = Board.getBoardInstance();
+      MoveValidator.instance = new MoveValidator(
+        board,
+        new AttackDetector(MoveGenerator.getInstance(), board)
+      );
+    }
+    return MoveValidator.instance;
+  }
 
   public isValidMove(move: IMove): boolean {
-    const piece: IPiece = move.getPiece();
+    const side: ColorType = move.getPiece().getSide();
+
+    if (move.getType() === 'CASTLING') {
+      if (this.attackDetector.isSquareAttacked(move.getFrom(), side)) return false;
+      if (this.attackDetector.isSquareAttacked(this.getCastlingThroughSquare(move), side)) {
+        return false;
+      }
+    }
+
     const captured: IPiece | null = this.makeMove(move);
-    const isLegal: boolean = !this.isKingInCheck(piece.getSide());
+    const isLegal: boolean = !this.attackDetector.isInCheck(side);
     this.undoMove(move, captured);
 
     return isLegal;
+  }
+
+  public isInCheck(side: ColorType): boolean {
+    return this.attackDetector.isInCheck(side);
+  }
+
+  protected getCastlingThroughSquare(move: IMove): IPosition {
+    const from: IPosition = move.getFrom();
+    const to: IPosition = move.getTo();
+    return Position.of((from.getRank() + to.getRank()) / 2, (from.getFile() + to.getFile()) / 2);
   }
 
   protected makeMove(move: IMove): IPiece | null {
@@ -34,38 +71,6 @@ class MoveValidator implements IMoveValidator {
     move.getPiece().setPosition(move.getFrom());
     fromCell.setPiece(move.getPiece());
     toCell.setPiece(captured);
-  }
-
-  protected isKingInCheck(side: ColorType): boolean {
-    const kingPosition: IPosition | null = this.findKingPosition(side);
-    if (!kingPosition) return false;
-
-    const generator: MoveGenerator = MoveGenerator.getInstance();
-
-    for (const cell of this.board) {
-      const enemy: IPiece | null = cell.getPiece();
-      if (!enemy || enemy.getSide() === side) continue;
-
-      for (const move of generator.generate(enemy)) {
-        if (move.getTo().toString() === kingPosition.toString()) {
-          return true;
-        }
-      }
-    }
-
-    return false;
-  }
-
-  protected findKingPosition(side: ColorType): IPosition | null {
-    for (const cell of this.board) {
-      const piece: IPiece | null = cell.getPiece();
-      if (!piece) continue;
-      if (piece.getType() === 'KING' && piece.getSide() === side) {
-        return cell.getPosition();
-      }
-    }
-
-    return null;
   }
 }
 

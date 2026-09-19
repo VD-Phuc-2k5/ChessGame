@@ -7,6 +7,7 @@ import {
   PieceSymbolType,
   ColorType,
   CastlingRightType,
+  MoveType,
 } from '@chess/core';
 import { Move } from './move.js';
 import { Position } from '../position/position.js';
@@ -37,7 +38,7 @@ class MoveGenerator {
 
     for (const to of this.getCandidatePositions(piece)) {
       if (!this.isValidRegularMove(piece, from, to)) continue;
-      moves.push(new Move(piece, from, to));
+      moves.push(new Move(piece, from, to, this.getRegularMoveType(piece, to)));
     }
 
     return moves;
@@ -68,7 +69,7 @@ class MoveGenerator {
     if (!target) return;
     if (!this.isEnPassantCapture(piece, from, target)) return;
 
-    moves.push(new Move(piece, from, target));
+    moves.push(new Move(piece, from, target, 'EN_PASSANT'));
   }
 
   protected isEnPassantCapture(piece: IPiece, from: IPosition, target: IPosition): boolean {
@@ -109,7 +110,7 @@ class MoveGenerator {
     const right: CastlingRightType = side === 'white' ? 'K' : 'k';
     if (!this.canCastle(side, right, 8, [6, 7])) return;
 
-    moves.push(new Move(piece, from, Position.of(this.getBackRank(side), 7)));
+    moves.push(new Move(piece, from, Position.of(this.getBackRank(side), 7), 'CASTLING'));
   }
 
   protected addQueensideCastleMove(piece: IPiece, from: IPosition, moves: IMove[]): void {
@@ -117,7 +118,7 @@ class MoveGenerator {
     const right: CastlingRightType = side === 'white' ? 'Q' : 'q';
     if (!this.canCastle(side, right, 1, [2, 3, 4])) return;
 
-    moves.push(new Move(piece, from, Position.of(this.getBackRank(side), 3)));
+    moves.push(new Move(piece, from, Position.of(this.getBackRank(side), 3), 'CASTLING'));
   }
 
   protected canCastle(
@@ -147,6 +148,16 @@ class MoveGenerator {
       const cell: ICell | undefined = this.board.getCell(Position.of(rank, file));
       return cell !== undefined && cell.getPiece() === null;
     });
+  }
+
+  protected getRegularMoveType(piece: IPiece, to: IPosition): MoveType {
+    if (this.isPawn(piece) && this.isPromotionDestination(piece, to)) return 'PROMOTION';
+    return 'NORMAL';
+  }
+
+  protected isPromotionDestination(piece: IPiece, to: IPosition): boolean {
+    const lastRank: number = piece.getSide() === 'white' ? 1 : 8;
+    return to.getRank() === lastRank;
   }
 
   protected getCandidatePositions(piece: IPiece): IPosition[] {

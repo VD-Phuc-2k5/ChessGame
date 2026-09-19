@@ -1,10 +1,11 @@
-import { IMove, IPosition, IPiece } from '@chess/core';
+import { IMove, IPosition, IPiece, MoveType } from '@chess/core';
 
 class Move implements IMove {
   constructor(
     private piece: IPiece,
     private from: IPosition,
-    private to: IPosition
+    private to: IPosition,
+    private type: MoveType = 'NORMAL'
   ) {}
 
   getFrom(): IPosition {
@@ -17,6 +18,10 @@ class Move implements IMove {
 
   getPiece(): IPiece {
     return this.piece;
+  }
+
+  getType(): MoveType {
+    return this.type;
   }
 }
 
