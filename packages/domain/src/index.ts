@@ -6,3 +6,4 @@ export * from './lib/position/index.js';
 export * from './lib/movement/index.js';
 export * from './lib/offset/index.js';
 export * from './lib/move/index.js';
+export * from './lib/game/index.js';
