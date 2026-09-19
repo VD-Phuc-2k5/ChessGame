@@ -5,5 +5,8 @@ export * from './lib/piece/index.js';
 export * from './lib/position/index.js';
 export * from './lib/movement/index.js';
 export * from './lib/offset/index.js';
+export * from './lib/attack/index.js';
 export * from './lib/move/index.js';
 export * from './lib/game/index.js';
+export * from './lib/execution/index.js';
+export * from './lib/history/index.js';
