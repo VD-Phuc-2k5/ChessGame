@@ -7,12 +7,13 @@ import {
   PieceSymbolType,
   ColorType,
   CastlingRightType,
-  MoveType,
 } from '@chess/core';
 import { Move } from './move.js';
 import { Position } from '../position/position.js';
 import { Board } from '../board/board.js';
 import { GameState } from '../game/gameState.js';
+
+const PROMOTION_PIECES: PieceSymbolType[] = ['QUEEN', 'ROOK', 'BISHOP', 'KNIGHT'];
 
 class MoveGenerator {
   private static instance: MoveGenerator | null = null;
@@ -38,7 +39,13 @@ class MoveGenerator {
 
     for (const to of this.getCandidatePositions(piece)) {
       if (!this.isValidRegularMove(piece, from, to)) continue;
-      moves.push(new Move(piece, from, to, this.getRegularMoveType(piece, to)));
+      if (this.isPromotionDestination(piece, to)) {
+        for (const promotion of PROMOTION_PIECES) {
+          moves.push(new Move(piece, from, to, 'PROMOTION', promotion));
+        }
+        continue;
+      }
+      moves.push(new Move(piece, from, to, 'NORMAL'));
     }
 
     return moves;
@@ -150,12 +157,8 @@ class MoveGenerator {
     });
   }
 
-  protected getRegularMoveType(piece: IPiece, to: IPosition): MoveType {
-    if (this.isPawn(piece) && this.isPromotionDestination(piece, to)) return 'PROMOTION';
-    return 'NORMAL';
-  }
-
   protected isPromotionDestination(piece: IPiece, to: IPosition): boolean {
+    if (piece.getType() !== 'PAWN') return false;
     const lastRank: number = piece.getSide() === 'white' ? 1 : 8;
     return to.getRank() === lastRank;
   }

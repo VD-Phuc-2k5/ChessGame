@@ -40,7 +40,7 @@ class MoveHistory {
   protected toUci(move: IMove): string {
     let uci: string = move.getFrom().toString() + move.getTo().toString();
     if (move.getType() === 'PROMOTION') {
-      uci += PieceSymbol.QUEEN.toLowerCase();
+      uci += PieceSymbol[move.getPromotionPiece() ?? 'QUEEN'].toLowerCase();
     }
     return uci;
   }

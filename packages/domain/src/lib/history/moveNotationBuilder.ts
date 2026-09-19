@@ -43,7 +43,7 @@ class MoveNotationBuilder {
     notation += move.getTo().toString();
 
     if (move.getType() === 'PROMOTION') {
-      notation += '=' + PieceSymbol.QUEEN;
+      notation += '=' + PieceSymbol[move.getPromotionPiece() ?? 'QUEEN'];
     }
 
     return notation;

@@ -1,4 +1,4 @@
-import { IBoard, IMove, IPiece, ColorType } from '@chess/core';
+import { IBoard, IMove, IPiece, ColorType, PieceSymbolType } from '@chess/core';
 import { MoveExecutor } from './moveExecutor.js';
 import { PieceFactory } from '../piece/pieceFactory.js';
 
@@ -12,8 +12,8 @@ class PromotionMoveExecutor extends MoveExecutor {
     this.movePiece(move.getFrom(), move.getTo(), move.getPiece());
 
     const side: ColorType = move.getPiece().getSide();
-    const promoted: IPiece =
-      side === 'white' ? PieceFactory.createWhiteQueen() : PieceFactory.createBlackQueen();
+    const promotion: PieceSymbolType = move.getPromotionPiece() ?? 'QUEEN';
+    const promoted: IPiece = PieceFactory.createPiece(side, promotion);
     promoted.setPosition(move.getTo());
     this.board.getCell(move.getTo())?.setPiece(promoted);
 

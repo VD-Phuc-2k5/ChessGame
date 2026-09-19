@@ -1,4 +1,12 @@
-import { IBoard, IGameState, IMove, IPiece, IPosition, ColorType } from '@chess/core';
+import {
+  IBoard,
+  IGameState,
+  IMove,
+  IPiece,
+  IPosition,
+  ColorType,
+  PieceSymbolType,
+} from '@chess/core';
 import { Board } from '../board/board.js';
 import { GameState } from './gameState.js';
 import { GameStateUpdater } from './gameStateUpdater.js';
@@ -27,13 +35,17 @@ class Game {
     this.notationBuilder = new MoveNotationBuilder(this.board, this.validator);
   }
 
-  public makeMove(from: IPosition, to: IPosition): boolean {
+  public makeMove(
+    from: IPosition,
+    to: IPosition,
+    promotion: PieceSymbolType | null = null
+  ): boolean {
     if (this.result) return false;
 
     const piece: IPiece | null = this.board.getCell(from)?.getPiece() ?? null;
     if (!piece || piece.getSide() !== this.gameState.getCurrentSide()) return false;
 
-    const move: IMove | null = this.findLegalMove(piece, from, to);
+    const move: IMove | null = this.findLegalMove(piece, from, to, promotion);
     if (!move) return false;
 
     const baseNotation: string = this.notationBuilder.buildBase(move);
@@ -97,9 +109,15 @@ class Game {
     this.result = null;
   }
 
-  protected findLegalMove(piece: IPiece, from: IPosition, to: IPosition): IMove | null {
+  protected findLegalMove(
+    piece: IPiece,
+    from: IPosition,
+    to: IPosition,
+    promotion: PieceSymbolType | null = null
+  ): IMove | null {
     for (const move of this.generator.generate(piece)) {
       if (move.getTo().toString() !== to.toString()) continue;
+      if (move.getType() === 'PROMOTION' && move.getPromotionPiece() !== promotion) continue;
       if (this.validator.isValidMove(move)) return move;
     }
     return null;
