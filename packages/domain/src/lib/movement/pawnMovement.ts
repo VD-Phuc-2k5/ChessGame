@@ -10,12 +10,14 @@ import {
   END_FILE,
 } from '@chess/core';
 import { Position } from '../position/position.js';
+import { Movement } from './movement.js';
 
-class PawnMovement implements IMovement {
+class PawnMovement extends Movement {
   private static readonly cache: Map<IColor, PawnMovement> = new Map();
   public readonly moveTable: MoveTableType;
 
   private constructor(private readonly side: IColor) {
+    super();
     this.moveTable = this.buildMoveTable();
   }
 
@@ -57,14 +59,6 @@ class PawnMovement implements IMovement {
 
   private getForwardRankNumber(rankNumber: number, step: number): number {
     return rankNumber + step * this.getDirection();
-  }
-
-  private isValidRankNumber(rankNumber: number): boolean {
-    return rankNumber >= START_RANK && rankNumber <= END_RANK;
-  }
-
-  private isValidFileNumber(fileNumber: number): boolean {
-    return fileNumber >= START_FILE && fileNumber <= END_FILE;
   }
 
   private getDiagonalCapturePositions(rankNumber: number, fileNumber: number): IPosition[] {
