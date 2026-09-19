@@ -1,9 +1,18 @@
-import { ColorType, IMove } from '@chess/core';
+import { ColorType, IPosition, PieceSymbolType } from '@chess/core';
+
+import { StockfishEngine } from './stockfishEngine';
+import { uciToMove } from './uci';
+
+interface PlayerMove {
+  from: IPosition;
+  to: IPosition;
+  promotion?: PieceSymbolType;
+}
 
 interface IPlayerStrategy {
   readonly side: ColorType;
   readonly name: string;
-  computeMove(): IMove | null;
+  computeMove(): Promise<PlayerMove | null>;
 }
 
 class HumanPlayer implements IPlayerStrategy {
@@ -11,28 +20,28 @@ class HumanPlayer implements IPlayerStrategy {
 
   constructor(public readonly side: ColorType) {}
 
-  public computeMove(): IMove | null {
+  public async computeMove(): Promise<PlayerMove | null> {
     return null;
   }
 }
 
 class EnginePlayer implements IPlayerStrategy {
-  public readonly name: string = 'Engine';
+  public readonly name: string = 'Stockfish';
 
-  constructor(public readonly side: ColorType) {}
+  constructor(
+    public readonly side: ColorType,
+    private readonly engine: StockfishEngine,
+    private readonly getUciMoves: () => string[],
+    private readonly moveTimeMs: number
+  ) {}
 
-  public computeMove(): IMove | null {
-    return null;
+  public async computeMove(): Promise<PlayerMove | null> {
+    const best: string | null = await this.engine.computeMove(this.getUciMoves(), this.moveTimeMs);
+    return best ? uciToMove(best) : null;
   }
 }
 
 type PlayerMode = 'human' | 'engine';
 
-class PlayerStrategyFactory {
-  public static create(side: ColorType, mode: PlayerMode): IPlayerStrategy {
-    return mode === 'engine' ? new EnginePlayer(side) : new HumanPlayer(side);
-  }
-}
-
-export { HumanPlayer, EnginePlayer, PlayerStrategyFactory };
-export type { IPlayerStrategy, PlayerMode };
+export { HumanPlayer, EnginePlayer };
+export type { IPlayerStrategy, PlayerMove, PlayerMode };

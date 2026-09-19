@@ -1,8 +1,14 @@
-import { ColorType, IPosition } from '@chess/core';
+import { ColorType, IPosition, PieceSymbolType } from '@chess/core';
 import { Game, GameResult, MoveRecord } from '@chess/domain';
 
 import { GameClock } from './gameClock';
-import { IPlayerStrategy, PlayerMode, PlayerStrategyFactory } from './playerStrategy';
+import { EnginePlayer, HumanPlayer, IPlayerStrategy, PlayerMode } from './playerStrategy';
+import { StockfishEngine } from './stockfishEngine';
+
+interface PendingPromotion {
+  from: IPosition;
+  to: IPosition;
+}
 
 interface GameSnapshot {
   selected: IPosition | null;
@@ -15,17 +21,24 @@ interface GameSnapshot {
   whiteTime: number;
   blackTime: number;
   moveRecords: MoveRecord[];
-  players: Record<ColorType, IPlayerStrategy>;
+  pendingPromotion: PendingPromotion | null;
+  playerMode: PlayerMode;
+  engineThinking: boolean;
+  engineMoveTime: number;
 }
 
 class GameController {
   private readonly game: Game = new Game();
   private readonly clock: GameClock = new GameClock();
+  private readonly engine: StockfishEngine = new StockfishEngine();
   private readonly listeners: Set<() => void> = new Set();
   private flashTimeout: ReturnType<typeof setTimeout> | null = null;
   private snapshot: GameSnapshot;
+  private engineRequestId: number = 0;
 
   private humanSide: ColorType = 'white';
+  private playerMode: PlayerMode = 'human';
+  private engineMoveTimeMs: number = 500;
 
   constructor() {
     this.snapshot = this.buildSnapshot();
@@ -43,15 +56,29 @@ class GameController {
   }
 
   public setHumanSide(side: ColorType): void {
+    if (this.humanSide === side) return;
     this.humanSide = side;
-    this.notify();
+    this.reset();
   }
 
   public getHumanSide(): ColorType {
     return this.humanSide;
   }
 
+  public setPlayerMode(mode: PlayerMode): void {
+    if (this.playerMode === mode) return;
+    this.playerMode = mode;
+    this.reset();
+  }
+
+  public setEngineMoveTime(ms: number): void {
+    this.engineMoveTimeMs = ms;
+    this.snapshot = { ...this.snapshot, engineMoveTime: ms };
+    this.notify();
+  }
+
   public selectSquare(position: IPosition): void {
+    if (this.snapshot.pendingPromotion || this.isEngineTurn()) return;
     if (this.snapshot.selected === null) {
       this.trySelect(position);
       return;
@@ -71,16 +98,26 @@ class GameController {
   }
 
   public tryMove(from: IPosition, to: IPosition): boolean {
-    const made: boolean = this.game.makeMove(from, to);
-    if (!made) {
-      this.flashIllegal(to);
-      return false;
+    if (this.isPromotionMove(from, to)) {
+      this.snapshot = { ...this.snapshot, pendingPromotion: { from, to } };
+      this.notify();
+      return true;
     }
+    return this.executeMove(from, to, null);
+  }
 
-    this.clock.swap(this.game.getCurrentSide());
-    this.clearSelection();
+  public promote(piece: PieceSymbolType): void {
+    const pending: PendingPromotion | null = this.snapshot.pendingPromotion;
+    if (!pending) return;
+    this.snapshot = { ...this.snapshot, pendingPromotion: null };
     this.notify();
-    return true;
+    this.executeMove(pending.from, pending.to, piece);
+  }
+
+  public cancelPromotion(): void {
+    if (!this.snapshot.pendingPromotion) return;
+    this.snapshot = { ...this.snapshot, pendingPromotion: null };
+    this.notify();
   }
 
   public clearSelection(): void {
@@ -89,6 +126,7 @@ class GameController {
   }
 
   public startDrag(position: IPosition): void {
+    if (this.snapshot.pendingPromotion || this.isEngineTurn()) return;
     const targets: string[] = this.game
       .getLegalMoves(position)
       .map((move) => move.getTo().toString());
@@ -113,11 +151,14 @@ class GameController {
   }
 
   public reset(): void {
+    this.engineRequestId += 1;
+    this.engine.stop();
     this.game.reset();
     this.clock.reset();
     this.clock.start(this.game.getCurrentSide());
     this.snapshot = this.buildSnapshot();
     this.notify();
+    this.scheduleEngineMove();
   }
 
   public getPgn(headers: Record<string, string | undefined> = {}): string {
@@ -147,6 +188,68 @@ class GameController {
     }, 600);
   }
 
+  protected isPromotionMove(from: IPosition, to: IPosition): boolean {
+    return this.game
+      .getLegalMoves(from)
+      .some((move) => move.getTo().toString() === to.toString() && move.getType() === 'PROMOTION');
+  }
+
+  protected executeMove(
+    from: IPosition,
+    to: IPosition,
+    promotion: PieceSymbolType | null
+  ): boolean {
+    const made: boolean = this.game.makeMove(from, to, promotion);
+    if (!made) {
+      this.flashIllegal(to);
+      return false;
+    }
+
+    this.clock.swap(this.game.getCurrentSide());
+    this.clearSelection();
+    this.notify();
+    this.scheduleEngineMove();
+    return true;
+  }
+
+  protected scheduleEngineMove(): void {
+    const side: ColorType = this.game.getCurrentSide();
+    if (this.game.isGameOver() || this.playerMode !== 'engine' || side === this.humanSide) return;
+
+    const requestId: number = ++this.engineRequestId;
+    const player: IPlayerStrategy = this.createPlayer(side);
+    if (!(player instanceof EnginePlayer)) return;
+
+    this.snapshot = { ...this.snapshot, engineThinking: true };
+    this.notify();
+
+    player
+      .computeMove()
+      .then((move) => {
+        if (
+          requestId !== this.engineRequestId ||
+          this.game.getCurrentSide() !== side ||
+          this.game.isGameOver() ||
+          !this.isEngineTurn()
+        ) {
+          return;
+        }
+        this.snapshot = { ...this.snapshot, engineThinking: false };
+        this.notify();
+        if (!move) return;
+        this.executeMove(move.from, move.to, move.promotion ?? null);
+      })
+      .catch(() => {
+        if (requestId !== this.engineRequestId) return;
+        this.snapshot = { ...this.snapshot, engineThinking: false };
+        this.notify();
+      });
+  }
+
+  protected isEngineTurn(): boolean {
+    return this.playerMode === 'engine' && this.game.getCurrentSide() !== this.humanSide;
+  }
+
   protected buildSnapshot(): GameSnapshot {
     return {
       selected: null,
@@ -159,15 +262,24 @@ class GameController {
       whiteTime: this.clock.getWhiteTime(),
       blackTime: this.clock.getBlackTime(),
       moveRecords: this.game.getMoveRecords(),
-      players: {
-        white: PlayerStrategyFactory.create('white', this.getPlayerMode()),
-        black: PlayerStrategyFactory.create('black', this.getPlayerMode()),
-      },
+      pendingPromotion: null,
+      playerMode: this.playerMode,
+      engineThinking: false,
+      engineMoveTime: this.engineMoveTimeMs,
     };
   }
 
-  protected getPlayerMode(): PlayerMode {
-    return 'human';
+  protected createPlayer(side: ColorType): IPlayerStrategy {
+    const isEngine: boolean = this.playerMode === 'engine' && side !== this.humanSide;
+    if (isEngine) {
+      return new EnginePlayer(
+        side,
+        this.engine,
+        () => this.game.getUciMoves(),
+        this.engineMoveTimeMs
+      );
+    }
+    return new HumanPlayer(side);
   }
 
   protected notify(): void {
@@ -185,4 +297,4 @@ class GameController {
 }
 
 export { GameController };
-export type { GameSnapshot };
+export type { GameSnapshot, PendingPromotion };

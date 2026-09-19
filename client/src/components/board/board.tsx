@@ -16,6 +16,7 @@ import { BoardFiles } from './boardFiles';
 import { BoardGrid } from './boardGrid';
 import { BoardRanks } from './boardRanks';
 import GameOverlay from './gameOverlay';
+import PromotionOverlay from './promotionOverlay';
 
 interface IBoardRootProps {
   children: ReactNode;
@@ -45,13 +46,24 @@ function BoardRoot({ children }: IBoardRootProps): JSX.Element {
       whiteTime: state.whiteTime,
       blackTime: state.blackTime,
       moves: state.moveRecords,
+      playerMode: state.playerMode,
+      engineThinking: state.engineThinking,
+      engineMoveTime: state.engineMoveTime,
+      pendingPromotion: state.pendingPromotion !== null,
       onSelectCell: (position) => controller.selectSquare(position),
       onDragStart: (position) => controller.startDrag(position),
       onDragEnd: () => controller.endDrag(),
       onDrop: (position) => controller.drop(position),
+      onSetPlayerMode: (mode) => controller.setPlayerMode(mode),
+      onSetEngineMoveTime: (ms) => controller.setEngineMoveTime(ms),
+      onPromote: (piece) => controller.promote(piece),
+      onCancelPromotion: () => controller.cancelPromotion(),
       onNewGame: () => {
-        controller.reset();
-        controller.setHumanSide('white');
+        if (controller.getHumanSide() !== 'white') {
+          controller.setHumanSide('white');
+        } else {
+          controller.reset();
+        }
         setSide('white');
       },
     };
@@ -60,7 +72,6 @@ function BoardRoot({ children }: IBoardRootProps): JSX.Element {
   const handleRotate: (orientation: Orientation) => void = useCallback(
     (orientation: Orientation): void => {
       if (orientation === side) return;
-      controller.reset();
       controller.setHumanSide(orientation);
       setSide(orientation);
     },
@@ -82,6 +93,13 @@ function BoardRoot({ children }: IBoardRootProps): JSX.Element {
           result={state.result}
           humanSide={controller.getHumanSide()}
           onNewGame={() => controller.reset()}
+        />
+      )}
+      {state.pendingPromotion !== null && (
+        <PromotionOverlay
+          side={state.currentSide}
+          onPromote={(piece) => controller.promote(piece)}
+          onCancel={() => controller.cancelPromotion()}
         />
       )}
     </BoardContext.Provider>
