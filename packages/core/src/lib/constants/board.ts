@@ -18,4 +18,9 @@ FILES.set(6, 'f');
 FILES.set(7, 'g');
 FILES.set(8, 'h');
 
-export { FILES, RANKS };
+const END_RANK = 8;
+const START_RANK = 1;
+const START_FILE = 1;
+const END_FILE = 8;
+
+export { FILES, RANKS, END_RANK, START_RANK, START_FILE, END_FILE };
