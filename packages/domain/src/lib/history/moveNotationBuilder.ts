@@ -8,10 +8,12 @@ import {
   PieceSymbol,
   PieceSymbolType,
 } from '@chess/core';
-import { Move } from '../move/move.js';
+import { MoveGenerator } from '../move/moveGenerator.js';
 import { MoveValidator } from '../move/moveValidator.js';
 
 class MoveNotationBuilder {
+  private readonly generator: MoveGenerator = MoveGenerator.getInstance();
+
   constructor(
     private readonly board: IBoard,
     private readonly validator: MoveValidator
@@ -60,13 +62,9 @@ class MoveNotationBuilder {
     const sharesFile: boolean = others.some(
       (m: IMove): boolean => m.getFrom().getFile() === from.getFile()
     );
-    const sharesRank: boolean = others.some(
-      (m: IMove): boolean => m.getFrom().getRank() === from.getRank()
-    );
 
-    if (sharesFile && !sharesRank) return RANKS.get(from.getRank())!;
-    if (!sharesFile && sharesRank) return FILES.get(from.getFile())!;
-    return FILES.get(from.getFile())! + RANKS.get(from.getRank())!;
+    if (sharesFile) return RANKS.get(from.getRank())!;
+    return FILES.get(from.getFile())!;
   }
 
   protected findSameTargetMoves(move: IMove): IMove[] {
@@ -79,8 +77,10 @@ class MoveNotationBuilder {
       if (piece.getType() !== move.getPiece().getType()) continue;
       if (piece.getSide() !== move.getPiece().getSide()) continue;
 
-      const candidate: IMove = new Move(piece, piece.getPosition(), move.getTo());
-      if (this.validator.isValidMove(candidate)) others.push(candidate);
+      for (const candidate of this.generator.generate(piece)) {
+        if (candidate.getTo().toString() !== move.getTo().toString()) continue;
+        if (this.validator.isValidMove(candidate)) others.push(candidate);
+      }
     }
 
     return others;

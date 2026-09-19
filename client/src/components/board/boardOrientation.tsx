@@ -1,11 +1,12 @@
 'use client';
 
-import { JSX, RefObject, useCallback, useRef } from 'react';
+import { JSX, RefObject, useCallback, useRef, useState } from 'react';
 
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 
 import { BoardOrientationControls, type Orientation } from './boardOrientationControls';
+import ConfirmOverlay from './confirmOverlay';
 
 interface IBoardOrientationProps {
   boardRef: RefObject<HTMLDivElement | null>;
@@ -22,8 +23,7 @@ function BoardOrientation({
   const flashOverlayRef: RefObject<HTMLDivElement | null> = useRef<HTMLDivElement>(null);
   const timelineRef: RefObject<gsap.core.Timeline | null> = useRef<gsap.core.Timeline | null>(null);
   const targetRef: RefObject<Orientation> = useRef<Orientation>(orientation);
-
-  targetRef.current = orientation;
+  const [pendingOrientation, setPendingOrientation] = useState<Orientation | null>(null);
 
   useGSAP(
     (): void => {
@@ -63,22 +63,52 @@ function BoardOrientation({
     { dependencies: [onRotate] }
   );
 
+  const playFlip: (target: Orientation) => void = useCallback((target: Orientation): void => {
+    if (!timelineRef.current) return;
+    targetRef.current = target;
+    timelineRef.current.restart();
+  }, []);
+
   const handleRotate: (target: Orientation) => void = useCallback(
     (target: Orientation): void => {
       if (target === orientation || !timelineRef.current || timelineRef.current.isActive()) {
         return;
       }
-      targetRef.current = target;
-      timelineRef.current.restart();
+      setPendingOrientation(target);
     },
     [orientation]
   );
+
+  const handleConfirm: () => void = useCallback((): void => {
+    if (pendingOrientation === null) return;
+    targetRef.current = pendingOrientation;
+    setPendingOrientation(null);
+    playFlip(pendingOrientation);
+  }, [pendingOrientation, playFlip]);
+
+  const handleCancel: () => void = useCallback((): void => {
+    setPendingOrientation(null);
+  }, []);
 
   return (
     <>
       <BoardOrientationControls orientation={orientation} onRotate={handleRotate} />
       <div ref={darkOverlayRef} className="board-orientation-overlay-dark" />
       <div ref={flashOverlayRef} className="board-orientation-overlay-flash" />
+      {pendingOrientation !== null && (
+        <ConfirmOverlay
+          title="Đổi bên?"
+          message={
+            pendingOrientation === 'black'
+              ? 'Bàn cờ sẽ xoay sang phía quân Đen và bắt đầu ván đấu mới.'
+              : 'Bàn cờ sẽ xoay sang phía quân Trắng và bắt đầu ván đấu mới.'
+          }
+          confirmLabel="Xác nhận"
+          cancelLabel="Hủy"
+          onConfirm={handleConfirm}
+          onCancel={handleCancel}
+        />
+      )}
     </>
   );
 }

@@ -6,7 +6,7 @@ import { MoveGenerator } from '../move/moveGenerator.js';
 import { MoveValidator } from '../move/moveValidator.js';
 import { MoveExecutorFactory } from '../execution/moveExecutorFactory.js';
 import { MoveNotationBuilder } from '../history/moveNotationBuilder.js';
-import { MoveHistory, CheckStatus } from '../history/moveHistory.js';
+import { MoveHistory, CheckStatus, MoveRecord } from '../history/moveHistory.js';
 import { PgnBuilder, PgnHeaders } from '../history/pgnBuilder.js';
 
 type GameResult = '1-0' | '0-1' | '1/2-1/2' | null;
@@ -80,6 +80,21 @@ class Game {
 
   public getMoveCount(): number {
     return this.history.getRecords().length;
+  }
+
+  public getMoveRecords(): MoveRecord[] {
+    return this.history.getRecords();
+  }
+
+  public getUciMoves(): string[] {
+    return this.history.getRecords().map((record: MoveRecord): string => record.uci);
+  }
+
+  public reset(): void {
+    this.board.reset();
+    this.gameState.reset();
+    this.history.reset();
+    this.result = null;
   }
 
   protected findLegalMove(piece: IPiece, from: IPosition, to: IPosition): IMove | null {

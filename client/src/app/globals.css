@@ -6,7 +6,77 @@
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+.board-layout {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  width: max-content;
+  max-width: 100%;
+}
+
+.board-main {
+  flex: 0 1 auto;
+}
+
+.legal-move-overlay {
+  box-sizing: border-box;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 0 0 12px 4px rgba(255, 255, 255, 0.75),
+    0 0 8px 2px rgba(255, 255, 255, 0.55);
+}
+
+.clock-panel {
+  width: 500px;
+  margin-left: 2rem;
+}
+
+.history-panel {
+  align-self: stretch;
+}
+
+@media (max-width: 820px) {
+  .board-layout {
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+  }
+
+  .board-main {
+    width: min(100%, 532px);
+  }
+
+  .clock-panel {
+    width: min(calc(100% - 2rem), 500px);
+    margin-left: 2rem;
+  }
+
+  .history-panel {
+    width: min(100%, 220px);
+  }
+
+  .board-grid {
+    width: min(100%, 500px) !important;
+    height: auto !important;
+    aspect-ratio: 1;
+  }
+
+  .board-ranks {
+    height: auto !important;
+    aspect-ratio: 1 / 8;
+  }
+
+  .board-files {
+    width: min(100%, 500px) !important;
+  }
+
+  .board-grid > div {
+    height: 100%;
+  }
 }
 
 .board-orientation-overlay-dark {

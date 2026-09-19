@@ -13,6 +13,7 @@ interface IGameState {
   setEnPassantTarget(target: IPosition | null): void;
   pushMove(move: IMove): void;
   popMove(): IMove | undefined;
+  reset(): void;
   getMoveHistory(): IMove[];
 }
 

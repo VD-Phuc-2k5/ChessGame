@@ -6,6 +6,7 @@ interface IBoard {
   getRanks(): string[];
   getCell(position: IPosition): ICell | undefined;
   setSize(size: number): void;
+  reset(): void;
   [Symbol.iterator](): Iterator<ICell>;
 }
 

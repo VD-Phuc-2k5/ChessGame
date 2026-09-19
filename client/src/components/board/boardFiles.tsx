@@ -7,7 +7,7 @@ export function BoardFiles(): JSX.Element {
   const { size, files } = useBoard();
   return (
     <div
-      className="grid grid-cols-8 border-x-4 border-transparent"
+      className="board-files ml-8 box-border grid grid-cols-8 px-1"
       style={{ width: size, height: 32 }}
     >
       {files.map((file: string): JSX.Element => (

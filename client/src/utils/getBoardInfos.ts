@@ -1,9 +1,9 @@
-import { IBoardInfos } from '@/interfaces/iboardInfo';
+import { IBoardRenderInfo } from '@/interfaces/iboardInfo';
 import { Board } from '@chess/domain';
 
 import type { Orientation } from '@/components/board/boardOrientationControls';
 
-function getBoardInfos(orientation: Orientation): IBoardInfos {
+function getBoardInfos(orientation: Orientation): IBoardRenderInfo {
   const size: number = 500;
   const board = Board.getBoardInstance();
   board.setSize(size);

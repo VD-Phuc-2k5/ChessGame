@@ -41,6 +41,13 @@ class Board implements IBoard, Iterable<ICell> {
     return this.cells.get(position.toString());
   }
 
+  public reset(): void {
+    for (const cell of this.cells.values()) {
+      cell.setPiece(null);
+    }
+    this.setupPieces();
+  }
+
   protected initialize(): void {
     this.initializeCells();
     this.setupPieces();
