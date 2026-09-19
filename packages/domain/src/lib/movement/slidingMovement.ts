@@ -1,4 +1,4 @@
-import { IPosition } from '@chess/core';
+import { IPosition, OffsetType } from '@chess/core';
 import { Movement } from './movement.js';
 import { Position } from '../position/position.js';
 
@@ -10,7 +10,7 @@ abstract class SlidingMovement extends Movement {
   protected getSlidingMoves(
     rankNumber: number,
     fileNumber: number,
-    directions: [number, number][]
+    directions: OffsetType[]
   ): IPosition[] {
     const moves: IPosition[] = [];
 

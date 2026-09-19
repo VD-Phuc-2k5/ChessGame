@@ -1,6 +1,15 @@
-import { MoveTableType, IPosition, START_RANK, START_FILE, END_RANK, END_FILE } from '@chess/core';
+import {
+  MoveTableType,
+  IPosition,
+  START_RANK,
+  START_FILE,
+  END_RANK,
+  END_FILE,
+  Direction,
+} from '@chess/core';
 import { Movement } from './movement.js';
 import { Position } from '../position/position.js';
+import { Offset } from '../offset/offset.js';
 
 class KnightMovement extends Movement {
   private static instance: KnightMovement | null;
@@ -32,14 +41,14 @@ class KnightMovement extends Movement {
 
   private getPossibleMoves(rankNumber: number, fileNumber: number): IPosition[] {
     const offsets: [number, number][] = [
-      [2, 1],
-      [2, -1],
-      [-2, 1],
-      [-2, -1],
-      [1, 2],
-      [1, -2],
-      [-1, 2],
-      [-1, -2],
+      Offset.of(Direction.Left2Top),
+      Offset.of(Direction.Left2Bottom),
+      Offset.of(Direction.Right2Top),
+      Offset.of(Direction.Right2Bottom),
+      Offset.of(Direction.LeftTop2),
+      Offset.of(Direction.RightTop2),
+      Offset.of(Direction.LeftBottom2),
+      Offset.of(Direction.RightBottom2),
     ];
 
     const moves: IPosition[] = [];

@@ -1,6 +1,15 @@
-import { MoveTableType, IPosition, START_RANK, START_FILE, END_RANK, END_FILE } from '@chess/core';
+import {
+  MoveTableType,
+  IPosition,
+  START_RANK,
+  START_FILE,
+  END_RANK,
+  END_FILE,
+  Direction,
+} from '@chess/core';
 import { SlidingMovement } from './slidingMovement.js';
 import { Position } from '../position/position.js';
+import { Offset } from '../offset/offset.js';
 
 class BishopMovement extends SlidingMovement {
   private static instance: BishopMovement | null;
@@ -25,10 +34,10 @@ class BishopMovement extends SlidingMovement {
       for (let fileNumber: number = START_FILE; fileNumber <= END_FILE; fileNumber++) {
         const square: IPosition = Position.of(rankNumber, fileNumber);
         const slidingMoves: IPosition[] = this.getSlidingMoves(rankNumber, fileNumber, [
-          [1, 1],
-          [1, -1],
-          [-1, 1],
-          [-1, -1],
+          Offset.of(Direction.TopLeft),
+          Offset.of(Direction.TopRight),
+          Offset.of(Direction.BottomLeft),
+          Offset.of(Direction.BottomRight),
         ]);
         moveTable.set(square.toString(), slidingMoves);
       }

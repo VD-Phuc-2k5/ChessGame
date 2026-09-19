@@ -1,6 +1,15 @@
-import { MoveTableType, IPosition, START_RANK, START_FILE, END_RANK, END_FILE } from '@chess/core';
+import {
+  MoveTableType,
+  IPosition,
+  START_RANK,
+  START_FILE,
+  END_RANK,
+  END_FILE,
+  Direction,
+} from '@chess/core';
 import { SlidingMovement } from './slidingMovement.js';
 import { Position } from '../position/position.js';
+import { Offset } from '../offset/offset.js';
 
 class RookMovement extends SlidingMovement {
   private static instance: RookMovement | null;
@@ -25,10 +34,10 @@ class RookMovement extends SlidingMovement {
       for (let fileNumber: number = START_FILE; fileNumber <= END_FILE; fileNumber++) {
         const square: IPosition = Position.of(rankNumber, fileNumber);
         const slidingMoves: IPosition[] = this.getSlidingMoves(rankNumber, fileNumber, [
-          [1, 0],
-          [-1, 0],
-          [0, 1],
-          [0, -1],
+          Offset.of(Direction.Top),
+          Offset.of(Direction.Bottom),
+          Offset.of(Direction.Left),
+          Offset.of(Direction.Right),
         ]);
         moveTable.set(square.toString(), slidingMoves);
       }
