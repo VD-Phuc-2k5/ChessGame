@@ -9,6 +9,7 @@ This project is the result of a ground-up **refactor** undertaken after studying
 ## Table of Contents
 
 - [Monorepo Structure](#monorepo-structure)
+- [Class Diagram](#class-diagram)
 - [SOLID Principles in Practice](#solid-principles-in-practice)
 - [Design Patterns Applied](#design-patterns-applied)
 - [Game Flow](#game-flow)
@@ -22,11 +23,11 @@ This project is the result of a ground-up **refactor** undertaken after studying
 
 ## Monorepo Structure
 
-| Package | Role |
-| --- | --- |
-| `@chess/core` | Interfaces, constants, types, enums. Declares contracts only; contains no implementation logic. |
-| `@chess/domain` | All chess domain logic: board, pieces, moves, history, notation. |
-| `client` | Next.js 15 + React 19 UI: interactive board, clock, move history, play vs Stockfish. |
+| Package         | Role                                                                                            |
+| --------------- | ----------------------------------------------------------------------------------------------- |
+| `@chess/core`   | Interfaces, constants, types, enums. Declares contracts only; contains no implementation logic. |
+| `@chess/domain` | All chess domain logic: board, pieces, moves, history, notation.                                |
+| `client`        | Next.js 15 + React 19 UI: interactive board, clock, move history, play vs Stockfish.            |
 
 ```
 ChessGame/
@@ -37,17 +38,21 @@ ChessGame/
 └── pnpm-workspace.yaml
 ```
 
+## Class Diagram
+
+![ChessGame class diagram](class-diagram.png)
+
 ---
 
 ## SOLID Principles in Practice
 
-| Principle | Application in this project |
-| --- | --- |
+| Principle                     | Application in this project                                                                                                                                                                       |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **S** - Single Responsibility | Each class has one job: `MoveGenerator` only generates candidate moves, `MoveValidator` only validates legality, `MoveNotationBuilder` only builds notation, `MoveExecutor` only executes a move. |
-| **O** - Open/Closed | Adding a new piece type requires only a new `XxxMovement` class plus a `PieceFactory` entry. Adding a new move type requires only a new `XxxMoveExecutor`. Existing code is not modified. |
-| **L** - Liskov Substitution | All pieces extend `Piece` / `Movement`; every executor extends `MoveExecutor`. They are interchangeable through the `IPiece`, `IMovement`, and executor interfaces. |
-| **I** - Interface Segregation | `@chess/core` splits small interfaces: `IBoard`, `ICell`, `IPiece`, `IMove`, etc. Each consumer depends only on the part it needs. |
-| **D** - Dependency Inversion | `domain` and `client` depend only on **interfaces** from `core`, never on concrete implementation classes. |
+| **O** - Open/Closed           | Adding a new piece type requires only a new `XxxMovement` class plus a `PieceFactory` entry. Adding a new move type requires only a new `XxxMoveExecutor`. Existing code is not modified.         |
+| **L** - Liskov Substitution   | All pieces extend `Piece` / `Movement`; every executor extends `MoveExecutor`. They are interchangeable through the `IPiece`, `IMovement`, and executor interfaces.                               |
+| **I** - Interface Segregation | `@chess/core` splits small interfaces: `IBoard`, `ICell`, `IPiece`, `IMove`, etc. Each consumer depends only on the part it needs.                                                                |
+| **D** - Dependency Inversion  | `domain` and `client` depend only on **interfaces** from `core`, never on concrete implementation classes.                                                                                        |
 
 ---
 
@@ -130,15 +135,15 @@ Open `http://localhost:3000`.
 
 ## Scripts
 
-| Command | Description |
-| --- | --- |
-| `pnpm build` | Builds core + domain + client |
-| `pnpm dev:client` | Builds core/domain, then starts the Next.js dev server |
-| `pnpm typecheck` | Builds core/domain + typechecks client |
-| `pnpm test` | Runs tests across all three packages |
-| `pnpm format` | Formats code (Prettier) |
-| `pnpm format:check` | Checks formatting |
-| `pnpm prepare` | Installs Husky (pre-commit hook) |
+| Command             | Description                                            |
+| ------------------- | ------------------------------------------------------ |
+| `pnpm build`        | Builds core + domain + client                          |
+| `pnpm dev:client`   | Builds core/domain, then starts the Next.js dev server |
+| `pnpm typecheck`    | Builds core/domain + typechecks client                 |
+| `pnpm test`         | Runs tests across all three packages                   |
+| `pnpm format`       | Formats code (Prettier)                                |
+| `pnpm format:check` | Checks formatting                                      |
+| `pnpm prepare`      | Installs Husky (pre-commit hook)                       |
 
 The Husky `pre-commit` hook automatically runs: `format:check`, then `typecheck`, then `test`, then `lint`.
 
