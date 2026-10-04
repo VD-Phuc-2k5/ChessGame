@@ -42,6 +42,10 @@ ChessGame/
 
 ![ChessGame class diagram](class-diagram.png)
 
+## Diagram
+
+![Diagram](diagram.png)
+
 ---
 
 ## SOLID Principles in Practice
